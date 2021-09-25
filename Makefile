@@ -58,16 +58,16 @@
 ##==========================================================================
 
 # The pre-processor and compiler options.
-MY_CFLAGS = -Wall -lX11 -fpermissive
+MY_CFLAGS = -Wall -lX11 -fpermissive -lpthread
 
 # The linker options.
-MY_LIBS   = -lm -lX11
+MY_LIBS   = -lm -lX11 -lpthread
 
 # The pre-processor options used by the cpp (man cpp for more).
-CPPFLAGS  = -Wall -lX11 -fpermissive
+CPPFLAGS  = -Wall -lX11 -fpermissive -lpthread
 
 # The options used in linking as well as in any direct use of ld.
-LDFLAGS   = -lgsl -lgslcblas
+LDFLAGS   = -lm -lX11
 # The directories in which source files reside.
 # If not specified, only the current directory will be serached.
 SRCDIRS   = src src/core src/aux
