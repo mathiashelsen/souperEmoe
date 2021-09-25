@@ -23,8 +23,11 @@ void render_X11::run(void)
 
   window  = XCreateSimpleWindow(display, RootWindow(display, 0), 0, 0, XSIZE, YSIZE, 1, 0, 0);
 
+  XMapWindow(display, window);
   _enableStream = true;
   std::cout << "Window created... " << std::endl;
+
+  XFlush(display);
 
   unsigned char*  rawFrame;
   XImage*         ximage;
@@ -44,6 +47,7 @@ void render_X11::run(void)
         std::cout << "XPutImage had issues" << std::endl;
 
       //free(rawFrame);
+      XFlush(display);
     }
     usleep(FRAMETIME); // Actually should correct for time used for rendering the image
   }

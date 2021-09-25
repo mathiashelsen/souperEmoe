@@ -46,7 +46,8 @@ int main(int argc, char **argv)
 {
   fifo<unsigned char *> videoStream;
   render_X11 videoOutput = render_X11( &videoStream );
-  std::thread videoThread( &render_X11::run, &videoOutput );
+  videoOutput.run();
+  //std::thread videoThread( &render_X11::run, &videoOutput );
 
 
   while(true)
