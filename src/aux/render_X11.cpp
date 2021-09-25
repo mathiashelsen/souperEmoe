@@ -1,54 +1,90 @@
 #include "render_X11.hpp"
 
+// For debug
+unsigned char *p;
+volatile int idx;
+
+XImage *CreateTrueColorImage2(Display *display, Visual *visual, int width, int height)
+{
+    int i, j;
+    unsigned char *image32=(unsigned char *)malloc(width*height*4);
+    unsigned char *p=image32;
+    if(idx == 200)
+      idx = 10;
+    else
+      idx += 10;
+
+    for(i=0; i<width; i++)
+    {
+        for(j=0; j<height; j++)
+        {
+            if((i<256)&&(j<256))
+            {
+                *p++=idx; // blue
+                *p++=idx; // green
+                *p++=idx; // red
+            }
+            else
+            {
+                *p++=i%256; // blue
+                *p++=j%256; // green
+                if(i<256)
+                    *p++=i%256; // red
+                else if(j<256)
+                    *p++=j%256; // red
+                else
+                    *p++=(256-j)%256; // red
+            }
+            p++;
+        }
+    }
+    return XCreateImage(display, visual, DefaultDepth(display,DefaultScreen(display)), ZPixmap, 0, image32, width, height, 32, 0);
+}
 
 render_X11::render_X11(fifo<unsigned char *> *Input_FIFO)
 {
   _videoStream = Input_FIFO;
+  p = NULL;
+  idx = 0;
 
 }
 
 void render_X11::run(void)
 {
   display = XOpenDisplay(NULL);
-  if(display == NULL)
-    std::cout << "Could NOT create display" << std::endl;
-  else
-    std::cout << "Could create display" << std::endl;
 
   visual  = DefaultVisual(display, 0);
-  if(visual == NULL)
-    std::cout << "Could NOT create visual" << std::endl;
-  else
-    std::cout << "Could create visual" << std::endl;
 
   window  = XCreateSimpleWindow(display, RootWindow(display, 0), 0, 0, XSIZE, YSIZE, 1, 0, 0);
 
   XMapWindow(display, window);
   _enableStream = true;
-  std::cout << "Window created... " << std::endl;
 
   XFlush(display);
 
   unsigned char*  rawFrame;
+  unsigned char*  rcvdFrame;
   XImage*         ximage;
+
+
+  XFlush(display);
+
+  ximage = CreateTrueColorImage2(display, visual, XSIZE, YSIZE);
+  int retVal = XPutImage(display, window, DefaultGC(display, 0), ximage, 0, 0, 0, 0, XSIZE, YSIZE);
+
+  XMapWindow(display, window);
+  //free(rawFrame);
+  XFlush(display);
 
   while(_enableStream)
   {
-    std::cout << "Waiting for data... " << std::endl;
     rawFrame = _videoStream->pop_last(); 
-    if(rawFrame != NULL)
-    {
-      std::cout << "Got some data... " << std::endl;
-      ximage = XCreateImage(display, visual, DefaultDepth(display,DefaultScreen(display)), ZPixmap, 0, rawFrame, XSIZE, YSIZE, 32, 0);
-      int retVal = XPutImage(display, window, DefaultGC(display, 0), ximage, 0, 0, 0, 0, XSIZE, YSIZE);
-      if(retVal == 0)
-        std::cout << "XPutImage was successfull" << std::endl;
-      else
-        std::cout << "XPutImage had issues" << std::endl;
-
-      //free(rawFrame);
-      XFlush(display);
-    }
+    //if(rawFrame != NULL)
+    //{
+    //  rcvdFrame = rawFrame;
+    //}
+    ximage = CreateTrueColorImage2(display, visual, XSIZE, YSIZE);
+    retVal = XPutImage(display, window, DefaultGC(display, 0), ximage, 0, 0, 0, 0, XSIZE, YSIZE);
     usleep(FRAMETIME); // Actually should correct for time used for rendering the image
   }
 

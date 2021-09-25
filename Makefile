@@ -64,7 +64,7 @@ MY_CFLAGS =
 MY_LIBS   = -lm -lX11 -lpthread
 
 # The pre-processor options used by the cpp (man cpp for more).
-CPPFLAGS  = -Wall -g -lX11 -fpermissive -lpthread
+CPPFLAGS  = -Wall -O3 -lX11 -fpermissive -lpthread
 
 # The options used in linking as well as in any direct use of ld.
 LDFLAGS   = -lm -lX11
