@@ -2,6 +2,7 @@
 #define _RENDER_X11_HPP
 
 #include <mutex>
+#include <iostream>
 
 #include <X11/Xlib.h>
 #include <unistd.h>
