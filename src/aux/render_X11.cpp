@@ -39,12 +39,13 @@ void render_X11::run(void)
     rawFrame = _videoStream->pop_last(); 
     if(rawFrame != NULL)
     {
+      // It would be more efficient to simply update the pointer and regenerate the XImage
       memcpy( (void *) canvas, (void *)rawFrame, XSIZE*YSIZE*4);
 
       XPutImage(display, window, DefaultGC(display, 0), ximage, 0, 0, 0, 0, XSIZE, YSIZE);
       XFlush(display);
 
-      free(rawFrame); // This will cost memory
+      free(rawFrame);
 
       usleep(FRAMETIME); // Actually should correct for time used for rendering the image
     }
