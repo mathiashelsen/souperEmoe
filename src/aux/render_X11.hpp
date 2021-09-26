@@ -3,8 +3,10 @@
 
 #include <mutex>
 #include <iostream>
+#include <chrono>
 
 #include <X11/Xlib.h>
+#include <X11/Xutil.h>
 #include <unistd.h>
 #include <cstring>
 #include <cstdio>
@@ -20,6 +22,9 @@ class render_X11
     Window                window;
     fifo<unsigned char*>* _videoStream;
     bool                  _enableStream;
+
+    std::chrono::high_resolution_clock::time_point prevFrame;
+    std::chrono::high_resolution_clock::time_point currFrame;
   public:
     render_X11(fifo<unsigned char *> *videoStream); //Will add an output FIFO later for keyboard/mouse input to the C64
     void run(void); // Function will fork a thread and keep looking at the FIFO
