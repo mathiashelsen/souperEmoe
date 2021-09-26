@@ -14,7 +14,7 @@ class Video
     int                     colCtr;
   public:
     Video(fifo<unsigned char *> *videoStream, Memory* memory);
-    int runNextOperation(int CPU_CyclesPassed);
+    virtual int runNextOperation(int CPU_CyclesPassed);
 };
 
 #endif

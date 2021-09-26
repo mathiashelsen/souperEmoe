@@ -7,6 +7,7 @@
 #include "Memory.hpp"
 #include "CPU.hpp"
 #include "Video.hpp"
+#include "BouncingBallVideo.hpp"
 
 #include <chrono>
 
