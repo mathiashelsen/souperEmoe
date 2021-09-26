@@ -6,6 +6,8 @@
 
 #include <X11/Xlib.h>
 #include <unistd.h>
+#include <cstring>
+#include <cstdio>
 
 #include "c64_constants.hpp"
 #include "fifo.hpp"
