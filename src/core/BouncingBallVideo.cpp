@@ -9,8 +9,6 @@ BouncingBallVideo::BouncingBallVideo(fifo<unsigned char *>* videoStream, Memory 
 
   rowCtr  = 0;
   colCtr  = 0;
-
-  _videoStream = videoStream;
 }
 
 int BouncingBallVideo::runNextOperation(int CPU_CyclesPassed)
