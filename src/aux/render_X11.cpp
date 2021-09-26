@@ -13,9 +13,9 @@ void render_X11::run(void)
 
   display = XOpenDisplay(NULL);
   visual  = DefaultVisual(display, 0);
-  window  = XCreateSimpleWindow(display, RootWindow(display, 0), 0, 0, XSIZE, YSIZE, 1, 0, 0);
-  canvas  = (unsigned char *)malloc(XSIZE*YSIZE*4);
-  ximage = XCreateImage(display, visual, DefaultDepth(display,DefaultScreen(display)), ZPixmap, 0, (char *)canvas, XSIZE, YSIZE, 32, 0);
+  window  = XCreateSimpleWindow(display, RootWindow(display, 0), 0, 0, SCREEN_XSIZE, SCREEN_YSIZE, 1, 0, 0);
+  canvas  = (unsigned char *)malloc(SCREEN_XSIZE*SCREEN_YSIZE*4);
+  ximage = XCreateImage(display, visual, DefaultDepth(display,DefaultScreen(display)), ZPixmap, 0, (char *)canvas, SCREEN_XSIZE, SCREEN_YSIZE, 32, 0);
   XMapWindow(display, window);
   XFlush(display);
 
@@ -33,8 +33,8 @@ void render_X11::run(void)
 
       XDestroyImage(ximage);
       canvas = rawFrame;
-      ximage = XCreateImage(display, visual, DefaultDepth(display,DefaultScreen(display)), ZPixmap, 0, (char *)canvas, XSIZE, YSIZE, 32, 0);
-      XPutImage(display, window, DefaultGC(display, 0), ximage, 0, 0, 0, 0, XSIZE, YSIZE);
+      ximage = XCreateImage(display, visual, DefaultDepth(display,DefaultScreen(display)), ZPixmap, 0, (char *)canvas, SCREEN_XSIZE, SCREEN_YSIZE, 32, 0);
+      XPutImage(display, window, DefaultGC(display, 0), ximage, 0, 0, 0, 0, SCREEN_XSIZE, SCREEN_YSIZE);
       XFlush(display);
 
       if(prevFrameTime < FRAMETIME)

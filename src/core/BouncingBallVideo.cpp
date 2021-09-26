@@ -2,8 +2,8 @@
 
 BouncingBallVideo::BouncingBallVideo(fifo<unsigned char *>* videoStream, Memory *memory) : Video(videoStream, memory)
 {
-  ball_x  = rand() % XSIZE;
-  ball_y  = rand() % YSIZE;
+  ball_x  = rand() % SCREEN_XSIZE;
+  ball_y  = rand() % SCREEN_YSIZE;
   dir_x   = 1;
   dir_y   = 1;
 
@@ -14,27 +14,27 @@ BouncingBallVideo::BouncingBallVideo(fifo<unsigned char *>* videoStream, Memory 
 int BouncingBallVideo::runNextOperation(int CPU_CyclesPassed)
 {
   colCtr += CPU_CyclesPassed*8;
-  if(colCtr >= TOTAL_WIDTH)
+  if(colCtr >= VIDEO_TOTAL_WIDTH)
   {
-    colCtr -= TOTAL_WIDTH;
+    colCtr -= VIDEO_TOTAL_WIDTH;
     rowCtr += 1; // If the number of cycles that has passed, exceeds even an entire line, this is wrong
   }
 
-  if( rowCtr >= TOTAL_HEIGHT )
+  if( rowCtr >= VIDEO_TOTAL_HEIGHT )
   {
-    rowCtr -= TOTAL_HEIGHT;
+    rowCtr -= VIDEO_TOTAL_HEIGHT;
 
     ball_x += dir_x;
     ball_y += dir_y;
 
-    if(ball_x >= XSIZE)
+    if(ball_x >= SCREEN_XSIZE)
     {
-      ball_x = XSIZE-1;
+      ball_x = SCREEN_XSIZE-1;
       dir_x  *= -1;
     }
-    if(ball_y >= YSIZE)
+    if(ball_y >= SCREEN_YSIZE)
     {
-      ball_y = YSIZE-1;
+      ball_y = SCREEN_YSIZE-1;
       dir_y  *= -1;
     }
 
@@ -50,15 +50,15 @@ int BouncingBallVideo::runNextOperation(int CPU_CyclesPassed)
       dir_y  *= -1;
     }
 
-    unsigned char *p = (unsigned char*) malloc(XSIZE*YSIZE*4);
-    memset((void *)p, 0, XSIZE*YSIZE*4);
+    unsigned char *p = (unsigned char*) malloc(SCREEN_XSIZE*SCREEN_YSIZE*4);
+    memset((void *)p, 0, SCREEN_XSIZE*SCREEN_YSIZE*4);
    
-    int ballPixel = (ball_x + ball_y*XSIZE)*3;
-    *((uint32_t *)p + ball_x + ball_y*XSIZE) = 0xffffff;
-    *((uint32_t *)p + ball_x-1 + ball_y*XSIZE) = 0xffffff;
-    *((uint32_t *)p + ball_x-2 + ball_y*XSIZE) = 0xffffff;
-    *((uint32_t *)p + ball_x + (ball_y+1)*XSIZE) = 0xffffff;
-    *((uint32_t *)p + ball_x + (ball_y-1)*XSIZE) = 0xffffff;
+    int ballPixel = (ball_x + ball_y*SCREEN_XSIZE)*3;
+    *((uint32_t *)p + ball_x + ball_y*SCREEN_XSIZE) = 0xffffff;
+    *((uint32_t *)p + ball_x-1 + ball_y*SCREEN_XSIZE) = 0xffffff;
+    *((uint32_t *)p + ball_x-2 + ball_y*SCREEN_XSIZE) = 0xffffff;
+    *((uint32_t *)p + ball_x + (ball_y+1)*SCREEN_XSIZE) = 0xffffff;
+    *((uint32_t *)p + ball_x + (ball_y-1)*SCREEN_XSIZE) = 0xffffff;
 
     _videoStream->push(p);
   }
