@@ -11,6 +11,7 @@ template<class T> class fifo
     std::deque<T> _fifo;
   public:
     T pop_last();
+    T pop_and_flush(int *droppedItems);
     void push(T);
 };
 
@@ -41,7 +42,31 @@ template <class T> T fifo<T>::pop_last(void)
   _fifo_mutex.unlock();
 
   return retVal;
+}
 
+template <class T> T fifo<T>::pop_and_flush(int *droppedItems)
+{
+  _fifo_mutex.lock();
+
+  T retVal = NULL;
+  *droppedItems = 0;
+
+  if( !_fifo.empty() )
+  {
+    retVal = _fifo.front();
+    _fifo.pop_front();
+  }
+
+  while( !_fifo.empty() )
+  {
+    free(_fifo.front());
+    _fifo.pop_front();
+    (*droppedItems)++;
+  }
+
+  _fifo_mutex.unlock();
+
+  return retVal;
 }
 
 #endif

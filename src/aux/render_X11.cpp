@@ -11,6 +11,8 @@ void render_X11::run(void)
   unsigned char*  canvas; // Canvas will be a pointer to where the data is stored
   XImage*         ximage;
 
+  int             droppedFrames = 0;
+
   display = XOpenDisplay(NULL);
   visual  = DefaultVisual(display, 0);
   window  = XCreateSimpleWindow(display, RootWindow(display, 0), 0, 0, SCREEN_XSIZE, SCREEN_YSIZE, 1, 0, 0);
@@ -24,9 +26,12 @@ void render_X11::run(void)
 
   while(_enableStream)
   {
-    rawFrame = _videoStream->pop_last(); 
+    rawFrame = _videoStream->pop_and_flush(&droppedFrames);
     if(rawFrame != NULL)
     {
+      if(droppedFrames != 0)
+        std::cout << "[Info, render_X11] Dropped " << droppedFrames << " frames" << std::endl;
+
       currFrame = std::chrono::high_resolution_clock::now();
       int prevFrameTime = (int) std::chrono::duration_cast<std::chrono::microseconds>(currFrame - prevFrame).count();
       prevFrame = currFrame;
