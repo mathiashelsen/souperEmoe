@@ -4,7 +4,8 @@ Computer::Computer(fifo<unsigned char*>* videoStream)
 {
   memory  = new Memory(64000);
   cpu     = new CPU(memory);
-  video   = new BouncingBallVideo(videoStream, memory);
+  video   = new VICII(videoStream, memory);
+  //video   = new BouncingBallVideo(videoStream, memory);
   //video   = new Video(videoStream, memory);
 }
 
