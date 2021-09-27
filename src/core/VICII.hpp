@@ -17,6 +17,7 @@ class VICII : public Video
   protected:
     unsigned char *p;
     uint32_t*     pixelPtr;
+    int           pixelCtr;
   public:
     VICII(fifo<unsigned char*>* videoStream, Memory* memory);
     int runNextOperation(int CPU_CyclesPassed);

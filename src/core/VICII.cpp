@@ -28,40 +28,56 @@ VICII::VICII(fifo<unsigned char*>* videoStream, Memory* memory) : Video(videoStr
   p = (unsigned char*) malloc(SCREEN_XSIZE*SCREEN_YSIZE*4);
   memset((void *)p, 0, SCREEN_XSIZE*SCREEN_YSIZE*4);
   pixelPtr = (uint32_t *) p;
+  pixelCtr = 0;
 }
 
 int VICII::runNextOperation(int CPU_CyclesPassed)
 {
-  colCtr += CPU_CyclesPassed*8;
+  int cellsToCopy = 0;
+  if(rowCtr > ROW_DEADTIME)
+  {
+    // Check if we have to discard a few cycles because they were invalid
+    if(colCtr < COL_DEADTIME)
+      cellsToCopy = std::max(0, (colCtr - COL_DEADTIME + CPU_CyclesPassed*8));
+    else
+      cellsToCopy = CPU_CyclesPassed*8;
 
+    if(VIDEO_TOTAL_WIDTH-colCtr < cellsToCopy)
+      cellsToCopy = VIDEO_TOTAL_WIDTH-colCtr;
+  }
+
+  std::cout << "Have to copy " << cellsToCopy << " pixels, already did " << pixelCtr << ", " << colCtr << ", " << rowCtr << std::endl;
+
+  /*
+   * COPY REQUIRED PIXELS (IF ANY)
+   */
+  for(int i = 0; i < cellsToCopy; i++)
+  {
+    *pixelPtr++ = colormap[14]; // Paint all pixels light blue
+    pixelCtr++;
+  }
+
+  /*
+   * INCREMENT/WRAP COUNTERS FOR VSYNC/HSYNC
+   */
+  colCtr += CPU_CyclesPassed*8;
   if(colCtr >= VIDEO_TOTAL_WIDTH)
   {
     colCtr -= VIDEO_TOTAL_WIDTH;
     rowCtr += 1; // If the number of cycles that has passed, exceeds even an entire line, this is wrong
   }
 
-  // Check if we are in the active part of the screen. For simplicity, the entire active part
-  // of the screen is put at the very last part. This corresponds with an arbitrary phase shift
-  if(colCtr > COL_DEADTIME && rowCtr > ROW_DEADTIME)
-  {
-    int cellsToCopy = std::min(colCtr - COL_DEADTIME, CPU_CyclesPassed)*8;
-    //std::cout << "Going to copy " << cellsToCopy << " of pixels" << std::endl;
-    for(int i = 0; i < cellsToCopy; i++)
-    {
-      *pixelPtr++ = colormap[14]; // Paint all pixels light blue
-    }
-  }
-
-  if( rowCtr >= VIDEO_TOTAL_HEIGHT )
+  if( rowCtr > VIDEO_TOTAL_HEIGHT )
   {
     rowCtr -= VIDEO_TOTAL_HEIGHT;
 
-    printf("First value of pointer %p = 0x%x\n", p, p[0]);
+    std::cout << "Processed " << pixelCtr << "pixels" << std::endl; // Value should always be 64 000
     _videoStream->push(p);
 
     p = (unsigned char*) malloc(SCREEN_XSIZE*SCREEN_YSIZE*4);
     memset((void *)p, 0, SCREEN_XSIZE*SCREEN_YSIZE*4);
     pixelPtr = (uint32_t *) p;
+    pixelCtr = 0;
   }
 
   return 0;

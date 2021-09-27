@@ -8,5 +8,6 @@ CPU::CPU(Memory *memory)
 int CPU::runNextOperation(void)
 {
   pc++;
-  return 1;
+  //return 1;
+  return (rand() % 7) + 1;
 }
