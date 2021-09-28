@@ -28,14 +28,17 @@ VICII::VICII(fifo<unsigned char*>* videoStream, Memory* memory, int OSR) : Video
   frontColor  = colormap[5];
   backColor   = colormap[7];
 
-  p           = (unsigned char*) malloc(SCREEN_XSIZE*SCREEN_YSIZE*4*_OSR*_OSR);
+  p             = (unsigned char*) malloc(SCREEN_XSIZE*SCREEN_YSIZE*4*_OSR*_OSR);
   memset((void *)p, 0, SCREEN_XSIZE*SCREEN_YSIZE*4*_OSR*_OSR);
-  screenPtr   = (uint32_t *) p;
-  screenBase  = screenPtr;
-  screenCtr   = 0;
-  memoryCtr   = 0;
+  screenPtr     = (uint32_t *) p;
+  screenBase    = screenPtr;
+  screenCtr     = 0;
+  memoryCtr     = 0;
+  fastCtr       = 0;
+  slowCtr       = 0;
 
-  charROM_BaseAddr  = DEFAULT_CHAR_ROM_BASE_ADDR;
+  charROM_BaseAddr    = DEFAULT_CHAR_ROM_BASE_ADDR;
+  screenRAM_BaseAddr  = DEFAULT_SCREEN_RAM_BASE_ADDR;
 }
 
 int VICII::runNextOperation(int CPU_CyclesPassed)
@@ -53,7 +56,6 @@ int VICII::runNextOperation(int CPU_CyclesPassed)
       cellsToCopy = VIDEO_TOTAL_WIDTH-colCtr;
   }
 
-  char charToShow = 0x3; // Should be the letter A
   char lineOfChar = rowCtr % 8;
 
   /*
@@ -64,10 +66,22 @@ int VICII::runNextOperation(int CPU_CyclesPassed)
 
   for(int i = 0; i < cellsToCopy/8; i++)
   {
-    char readByte = _memory->read(charROM_BaseAddr+charToShow*8+lineOfChar);
+    char charToShow = _memory->read(screenRAM_BaseAddr + fastCtr + slowCtr*40);
+    //char charToShow = 129;
+    char readByte   = _memory->read(charROM_BaseAddr+charToShow*8+lineOfChar);
 
     //char readByte = 0x0F; // You actually want to read from memory here
-    memoryCtr++;
+    fastCtr++;
+    // We have transferred a row
+    if(fastCtr == VIDEO_XSIZE/8)
+    {
+      fastCtr = 0;
+      // But its not complete yet
+      if(rowCtr % 8 == 7)
+        slowCtr++;
+
+    }
+
     for(int i = 0; i < 8; i++)
     {
       pixelValue = (((readByte & 0x80) >> 7) * frontColor) | (((~readByte & 0x80) >> 7) * backColor);
@@ -144,8 +158,9 @@ int VICII::runNextOperation(int CPU_CyclesPassed)
     memset((void *)p, 0, SCREEN_XSIZE*SCREEN_YSIZE*4*_OSR*_OSR);
     screenPtr   = (uint32_t *) p;
     screenBase  = screenPtr;
-    screenCtr   = 0;
-    memoryCtr   = 0;
+    memoryCtr = 0;
+    fastCtr       = 0;
+    slowCtr       = 0;
   }
 
   return 0;

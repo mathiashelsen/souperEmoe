@@ -11,8 +11,9 @@
 class DummyMemory : public Memory
 {
   protected:
-    const char* charROM_Name = "resources/1-writer.64c";
+    const char* charROM_Name = "resources/c64.bin";
     char*       charROM;
+    char*       videoRAM;
   public:
     DummyMemory(int nBytes);
     ~DummyMemory();
