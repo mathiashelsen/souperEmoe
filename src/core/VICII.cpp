@@ -53,38 +53,59 @@ int VICII::runNextOperation(int CPU_CyclesPassed)
   /*
    * COPY REQUIRED PIXELS (IF ANY)
    */
-  switch(_OSR)
+  for(int i = 0; i < cellsToCopy; i++)
   {
-    case 1:
-      for(int i = 0; i < cellsToCopy; i++)
-      {
+    switch(_OSR)
+    {
+      case 1:
         *screenPtr++ = colormap[14]; // Paint all pixels light blue
         screenCtr++;
         memoryCtr++;
-      }
-      break;
-    case 2:
-      for(int i = 0; i < cellsToCopy; i++)
+        break;
+      case 2:
       {
         *screenPtr                       = colormap[14];
-        *(screenPtr+1)                   = colormap[14];
-        *(screenPtr+_OSR*SCREEN_XSIZE)   = colormap[14];
-        *(screenPtr+_OSR*SCREEN_XSIZE+1) = colormap[14];
+        //*(screenPtr+1)                   = colormap[14];
+        //*(screenPtr+_OSR*SCREEN_XSIZE)   = colormap[14];
+        *(screenPtr+_OSR*SCREEN_XSIZE+1) = colormap[13];
 
-        screenPtr += 2;
-        screenCtr += 4;
+        screenPtr += _OSR;
+        screenCtr += _OSR*_OSR;
         memoryCtr++;
         int a = (int) (screenPtr - screenBase);
-        int b = (int) 2*SCREEN_XSIZE;
+        int b = (int) _OSR*SCREEN_XSIZE;
         if( (a % b) == 0 )
         {
-          screenPtr += 2*SCREEN_XSIZE;
+          screenPtr += _OSR*SCREEN_XSIZE;
         }
+
+        break;
       }
-      break;
-    default:
-      throw "This OSR is not supported by the VICII at this time\n";
+      case 3:
+      {
+        *(screenPtr                       ) = colormap[14];
+        *(screenPtr+1                     ) = colormap[14];
+        *(screenPtr+2                     ) = colormap[14];
+        *(screenPtr+_OSR*SCREEN_XSIZE     ) = colormap[14];
+        *(screenPtr+_OSR*SCREEN_XSIZE+1   ) = colormap[14];
+        *(screenPtr+_OSR*SCREEN_XSIZE+2   ) = colormap[14];
+        *(screenPtr+2*_OSR*SCREEN_XSIZE   ) = colormap[14];
+        *(screenPtr+2*_OSR*SCREEN_XSIZE+1 ) = colormap[14];
+        *(screenPtr+2*_OSR*SCREEN_XSIZE+2 ) = colormap[14];
+
+        screenPtr += _OSR;
+        screenCtr += _OSR*_OSR;
+        memoryCtr++;
+        int a = (int) (screenPtr - screenBase);
+        int b = (int) _OSR*SCREEN_XSIZE;
+        if( (a % b) == 0 )
+        {
+          screenPtr += (_OSR-1)*_OSR*SCREEN_XSIZE;
+        }
+        break;
+      }
   }
+}
 
   /*
    * INCREMENT/WRAP COUNTERS FOR VSYNC/HSYNC

@@ -16,7 +16,7 @@
 
 int main(int argc, char **argv)
 {
-  int OSR = 2;
+  int OSR = 3;
   fifo<unsigned char *> videoStream;
   render_X11 videoOutput = render_X11( &videoStream, OSR);
   std::thread videoThread( &render_X11::run, &videoOutput );
