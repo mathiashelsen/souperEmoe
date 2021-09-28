@@ -25,6 +25,9 @@ VICII::VICII(fifo<unsigned char*>* videoStream, Memory* memory, int OSR) : Video
   colCtr = 0;
   rowCtr = 0;
 
+  frontColor  = colormap[6];
+  backColor   = colormap[7];
+
   p           = (unsigned char*) malloc(SCREEN_XSIZE*SCREEN_YSIZE*4*_OSR*_OSR);
   memset((void *)p, 0, SCREEN_XSIZE*SCREEN_YSIZE*4*_OSR*_OSR);
   screenPtr   = (uint32_t *) p;
@@ -53,59 +56,68 @@ int VICII::runNextOperation(int CPU_CyclesPassed)
   /*
    * COPY REQUIRED PIXELS (IF ANY)
    */
-  for(int i = 0; i < cellsToCopy; i++)
+  if( cellsToCopy % 8 != 0)
+    throw "Error: pixels to copy is not a multiple of 8";
+
+  for(int i = 0; i < cellsToCopy/8; i++)
   {
-    switch(_OSR)
+    char readByte = 0x0F; // You actually want to read from memory here
+    memoryCtr++;
+    for(int i = 0; i < 8; i++)
     {
-      case 1:
-        *screenPtr++ = colormap[14]; // Paint all pixels light blue
-        screenCtr++;
-        memoryCtr++;
-        break;
-      case 2:
+      pixelValue = ((readByte & 1) * frontColor) | ((~readByte & 1) * backColor);
+      readByte >>= 1;
+       
+      switch(_OSR)
       {
-        *screenPtr                       = colormap[14];
-        //*(screenPtr+1)                   = colormap[14];
-        //*(screenPtr+_OSR*SCREEN_XSIZE)   = colormap[14];
-        *(screenPtr+_OSR*SCREEN_XSIZE+1) = colormap[13];
-
-        screenPtr += _OSR;
-        screenCtr += _OSR*_OSR;
-        memoryCtr++;
-        int a = (int) (screenPtr - screenBase);
-        int b = (int) _OSR*SCREEN_XSIZE;
-        if( (a % b) == 0 )
+        case 1:
+          *screenPtr++ = pixelValue;
+          screenCtr++;
+          break;
+        case 2:
         {
-          screenPtr += _OSR*SCREEN_XSIZE;
+          *screenPtr                       = pixelValue;
+          *(screenPtr+1)                   = pixelValue;
+          *(screenPtr+_OSR*SCREEN_XSIZE)   = pixelValue;
+          *(screenPtr+_OSR*SCREEN_XSIZE+1) = pixelValue;
+
+          screenPtr += _OSR;
+          screenCtr += _OSR*_OSR;
+          int a = (int) (screenPtr - screenBase);
+          int b = (int) _OSR*SCREEN_XSIZE;
+          if( (a % b) == 0 )
+          {
+            screenPtr += _OSR*SCREEN_XSIZE;
+          }
+
+          break;
         }
-
-        break;
-      }
-      case 3:
-      {
-        *(screenPtr                       ) = colormap[14];
-        *(screenPtr+1                     ) = colormap[14];
-        *(screenPtr+2                     ) = colormap[14];
-        *(screenPtr+_OSR*SCREEN_XSIZE     ) = colormap[14];
-        *(screenPtr+_OSR*SCREEN_XSIZE+1   ) = colormap[14];
-        *(screenPtr+_OSR*SCREEN_XSIZE+2   ) = colormap[14];
-        *(screenPtr+2*_OSR*SCREEN_XSIZE   ) = colormap[14];
-        *(screenPtr+2*_OSR*SCREEN_XSIZE+1 ) = colormap[14];
-        *(screenPtr+2*_OSR*SCREEN_XSIZE+2 ) = colormap[14];
-
-        screenPtr += _OSR;
-        screenCtr += _OSR*_OSR;
-        memoryCtr++;
-        int a = (int) (screenPtr - screenBase);
-        int b = (int) _OSR*SCREEN_XSIZE;
-        if( (a % b) == 0 )
+        case 3:
         {
-          screenPtr += (_OSR-1)*_OSR*SCREEN_XSIZE;
+          *(screenPtr                       ) = pixelValue;
+          *(screenPtr+1                     ) = pixelValue;
+          *(screenPtr+2                     ) = pixelValue;
+          *(screenPtr+_OSR*SCREEN_XSIZE     ) = pixelValue;
+          *(screenPtr+_OSR*SCREEN_XSIZE+1   ) = pixelValue;
+          *(screenPtr+_OSR*SCREEN_XSIZE+2   ) = pixelValue;
+          *(screenPtr+2*_OSR*SCREEN_XSIZE   ) = pixelValue;
+          *(screenPtr+2*_OSR*SCREEN_XSIZE+1 ) = pixelValue;
+          *(screenPtr+2*_OSR*SCREEN_XSIZE+2 ) = pixelValue;
+
+          screenPtr += _OSR;
+          screenCtr += _OSR*_OSR;
+          int a = (int) (screenPtr - screenBase);
+          int b = (int) _OSR*SCREEN_XSIZE;
+          if( (a % b) == 0 )
+          {
+            screenPtr += (_OSR-1)*_OSR*SCREEN_XSIZE;
+          }
+          break;
         }
-        break;
       }
+    }
   }
-}
+
 
   /*
    * INCREMENT/WRAP COUNTERS FOR VSYNC/HSYNC

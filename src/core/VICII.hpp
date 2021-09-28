@@ -18,6 +18,9 @@ class VICII : public Video
     unsigned char *p;
     uint32_t*     screenPtr;
     uint32_t*     screenBase;
+    uint32_t      frontColor;
+    uint32_t      backColor;
+    uint32_t      pixelValue;
     int           screenCtr;
     int           memoryCtr;
   public:
