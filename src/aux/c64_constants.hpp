@@ -15,4 +15,6 @@
 #define FRAMETIME 20000
 #define CYCLES_PER_FRAME 63*312
 
+#define DEFAULT_CHAR_ROM_BASE_ADDR 0xD00
+
 #endif

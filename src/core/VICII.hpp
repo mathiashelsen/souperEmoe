@@ -23,6 +23,7 @@ class VICII : public Video
     uint32_t      pixelValue;
     int           screenCtr;
     int           memoryCtr;
+    int           charROM_BaseAddr;
   public:
     VICII(fifo<unsigned char*>* videoStream, Memory* memory, int OSR);
     int runNextOperation(int CPU_CyclesPassed);

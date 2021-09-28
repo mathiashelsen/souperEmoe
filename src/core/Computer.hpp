@@ -5,6 +5,7 @@
 #include "../aux/c64_constants.hpp"
 
 #include "Memory.hpp"
+#include "DummyMemory.hpp"
 #include "CPU.hpp"
 #include "Video.hpp"
 #include "VICII.hpp"

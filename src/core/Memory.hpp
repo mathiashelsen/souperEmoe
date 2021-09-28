@@ -11,8 +11,8 @@ class Memory
   public:
     Memory(int nBytes);
     ~Memory();
-    char read(int addr);
-    void write(int addr, char data);
+    virtual char read(int addr);
+    virtual void write(int addr, char data);
 };
 
 #endif

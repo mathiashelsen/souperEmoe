@@ -25,7 +25,7 @@ VICII::VICII(fifo<unsigned char*>* videoStream, Memory* memory, int OSR) : Video
   colCtr = 0;
   rowCtr = 0;
 
-  frontColor  = colormap[6];
+  frontColor  = colormap[5];
   backColor   = colormap[7];
 
   p           = (unsigned char*) malloc(SCREEN_XSIZE*SCREEN_YSIZE*4*_OSR*_OSR);
@@ -34,6 +34,8 @@ VICII::VICII(fifo<unsigned char*>* videoStream, Memory* memory, int OSR) : Video
   screenBase  = screenPtr;
   screenCtr   = 0;
   memoryCtr   = 0;
+
+  charROM_BaseAddr  = DEFAULT_CHAR_ROM_BASE_ADDR;
 }
 
 int VICII::runNextOperation(int CPU_CyclesPassed)
@@ -51,7 +53,8 @@ int VICII::runNextOperation(int CPU_CyclesPassed)
       cellsToCopy = VIDEO_TOTAL_WIDTH-colCtr;
   }
 
-  //std::cout << "Have to copy " << cellsToCopy << " pixels, already did " << screenCtr << ", " << colCtr << ", " << rowCtr << std::endl;
+  char charToShow = 0x3; // Should be the letter A
+  char lineOfChar = rowCtr % 8;
 
   /*
    * COPY REQUIRED PIXELS (IF ANY)
@@ -61,12 +64,14 @@ int VICII::runNextOperation(int CPU_CyclesPassed)
 
   for(int i = 0; i < cellsToCopy/8; i++)
   {
-    char readByte = 0x0F; // You actually want to read from memory here
+    char readByte = _memory->read(charROM_BaseAddr+charToShow*8+lineOfChar);
+
+    //char readByte = 0x0F; // You actually want to read from memory here
     memoryCtr++;
     for(int i = 0; i < 8; i++)
     {
-      pixelValue = ((readByte & 1) * frontColor) | ((~readByte & 1) * backColor);
-      readByte >>= 1;
+      pixelValue = (((readByte & 0x80) >> 7) * frontColor) | (((~readByte & 0x80) >> 7) * backColor);
+      readByte <<= 1;
        
       switch(_OSR)
       {
