@@ -67,7 +67,6 @@ int VICII::runNextOperation(int CPU_CyclesPassed)
   for(int i = 0; i < cellsToCopy/8; i++)
   {
     char charToShow = _memory->read(screenRAM_BaseAddr + fastCtr + slowCtr*40);
-    //char charToShow = 129;
     char readByte   = _memory->read(charROM_BaseAddr+charToShow*8+lineOfChar);
 
     //char readByte = 0x0F; // You actually want to read from memory here
@@ -76,7 +75,6 @@ int VICII::runNextOperation(int CPU_CyclesPassed)
     if(fastCtr == VIDEO_XSIZE/8)
     {
       fastCtr = 0;
-      // But its not complete yet
       if(rowCtr % 8 == 7)
         slowCtr++;
 
