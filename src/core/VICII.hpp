@@ -16,10 +16,12 @@ class VICII : public Video
 {
   protected:
     unsigned char *p;
-    uint32_t*     pixelPtr;
-    int           pixelCtr;
+    uint32_t*     screenPtr;
+    uint32_t*     screenBase;
+    int           screenCtr;
+    int           memoryCtr;
   public:
-    VICII(fifo<unsigned char*>* videoStream, Memory* memory);
+    VICII(fifo<unsigned char*>* videoStream, Memory* memory, int OSR);
     int runNextOperation(int CPU_CyclesPassed);
 };
 

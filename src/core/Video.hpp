@@ -12,8 +12,9 @@ class Video
     Memory*                 _memory;
     int                     rowCtr;
     int                     colCtr;
+    int                     _OSR;
   public:
-    Video(fifo<unsigned char *> *videoStream, Memory* memory);
+    Video(fifo<unsigned char *> *videoStream, Memory* memory, int OSR);
     virtual int runNextOperation(int CPU_CyclesPassed);
 };
 

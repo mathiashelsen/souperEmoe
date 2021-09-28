@@ -19,7 +19,7 @@ class BouncingBallVideo : public Video
     int dir_x;
     int dir_y;
   public:
-    BouncingBallVideo(fifo<unsigned char*>* videoStream, Memory* memory);
+    BouncingBallVideo(fifo<unsigned char*>* videoStream, Memory* memory, int OSR);
     int runNextOperation(int CPU_CyclesPassed);
 };
 

@@ -1,7 +1,10 @@
 #include "BouncingBallVideo.hpp"
 
-BouncingBallVideo::BouncingBallVideo(fifo<unsigned char *>* videoStream, Memory *memory) : Video(videoStream, memory)
+BouncingBallVideo::BouncingBallVideo(fifo<unsigned char *>* videoStream, Memory *memory, int OSR) : Video(videoStream, memory, OSR)
 {
+  if(OSR != 1)
+    std::cout << "This GPU does not support OSR != 1. Except the unexpected." << std::endl;
+
   ball_x  = rand() % SCREEN_XSIZE;
   ball_y  = rand() % SCREEN_YSIZE;
   dir_x   = 1;

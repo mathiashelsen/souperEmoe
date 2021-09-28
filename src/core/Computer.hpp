@@ -21,11 +21,12 @@ class Computer
     CPU*    cpu;
     Video*  video;
     bool    reset;
+    int     _OSR;
 
     std::chrono::high_resolution_clock::time_point startOfFrame;
     std::chrono::high_resolution_clock::time_point endOfFrame;
   public:
-    Computer(fifo<unsigned char*>* videoStream);
+    Computer(fifo<unsigned char*>* videoStream, int OSR);
     void run();
 };
 

@@ -20,15 +20,17 @@ static uint32_t colormap[] =
     0xbbbbbb
   };
 
-VICII::VICII(fifo<unsigned char*>* videoStream, Memory* memory) : Video(videoStream, memory)
+VICII::VICII(fifo<unsigned char*>* videoStream, Memory* memory, int OSR) : Video(videoStream, memory, OSR)
 {
   colCtr = 0;
   rowCtr = 0;
 
-  p = (unsigned char*) malloc(SCREEN_XSIZE*SCREEN_YSIZE*4);
-  memset((void *)p, 0, SCREEN_XSIZE*SCREEN_YSIZE*4);
-  pixelPtr = (uint32_t *) p;
-  pixelCtr = 0;
+  p           = (unsigned char*) malloc(SCREEN_XSIZE*SCREEN_YSIZE*4*_OSR*_OSR);
+  memset((void *)p, 0, SCREEN_XSIZE*SCREEN_YSIZE*4*_OSR*_OSR);
+  screenPtr   = (uint32_t *) p;
+  screenBase  = screenPtr;
+  screenCtr   = 0;
+  memoryCtr   = 0;
 }
 
 int VICII::runNextOperation(int CPU_CyclesPassed)
@@ -46,15 +48,42 @@ int VICII::runNextOperation(int CPU_CyclesPassed)
       cellsToCopy = VIDEO_TOTAL_WIDTH-colCtr;
   }
 
-  std::cout << "Have to copy " << cellsToCopy << " pixels, already did " << pixelCtr << ", " << colCtr << ", " << rowCtr << std::endl;
+  //std::cout << "Have to copy " << cellsToCopy << " pixels, already did " << screenCtr << ", " << colCtr << ", " << rowCtr << std::endl;
 
   /*
    * COPY REQUIRED PIXELS (IF ANY)
    */
-  for(int i = 0; i < cellsToCopy; i++)
+  switch(_OSR)
   {
-    *pixelPtr++ = colormap[14]; // Paint all pixels light blue
-    pixelCtr++;
+    case 1:
+      for(int i = 0; i < cellsToCopy; i++)
+      {
+        *screenPtr++ = colormap[14]; // Paint all pixels light blue
+        screenCtr++;
+        memoryCtr++;
+      }
+      break;
+    case 2:
+      for(int i = 0; i < cellsToCopy; i++)
+      {
+        *screenPtr                       = colormap[14];
+        *(screenPtr+1)                   = colormap[14];
+        *(screenPtr+_OSR*SCREEN_XSIZE)   = colormap[14];
+        *(screenPtr+_OSR*SCREEN_XSIZE+1) = colormap[14];
+
+        screenPtr += 2;
+        screenCtr += 4;
+        memoryCtr++;
+        int a = (int) (screenPtr - screenBase);
+        int b = (int) 2*SCREEN_XSIZE;
+        if( (a % b) == 0 )
+        {
+          screenPtr += 2*SCREEN_XSIZE;
+        }
+      }
+      break;
+    default:
+      throw "This OSR is not supported by the VICII at this time\n";
   }
 
   /*
@@ -71,13 +100,14 @@ int VICII::runNextOperation(int CPU_CyclesPassed)
   {
     rowCtr -= VIDEO_TOTAL_HEIGHT;
 
-    std::cout << "Processed " << pixelCtr << "pixels" << std::endl; // Value should always be 64 000
     _videoStream->push(p);
 
-    p = (unsigned char*) malloc(SCREEN_XSIZE*SCREEN_YSIZE*4);
-    memset((void *)p, 0, SCREEN_XSIZE*SCREEN_YSIZE*4);
-    pixelPtr = (uint32_t *) p;
-    pixelCtr = 0;
+    p           = (unsigned char*) malloc(SCREEN_XSIZE*SCREEN_YSIZE*4*_OSR*_OSR);
+    memset((void *)p, 0, SCREEN_XSIZE*SCREEN_YSIZE*4*_OSR*_OSR);
+    screenPtr   = (uint32_t *) p;
+    screenBase  = screenPtr;
+    screenCtr   = 0;
+    memoryCtr   = 0;
   }
 
   return 0;
