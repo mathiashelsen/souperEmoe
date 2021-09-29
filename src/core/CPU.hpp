@@ -10,7 +10,7 @@ class CPU
     int pc;
   public:
     CPU(Memory* memory);
-    int runNextOperation(void);
+    virtual int runNextOperation(void);
 };
 
 #endif

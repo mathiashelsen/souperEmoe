@@ -13,6 +13,7 @@ class Memory
 {
   protected:
     const char* charROM_Name = "resources/c64.bin";
+    const char* executableName = "software/helloWorld.o";
     char* ram;
     int   ramSize; 
   public:

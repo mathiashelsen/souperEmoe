@@ -12,11 +12,14 @@ Memory::Memory(int nBytes)
   fileStream.open(charROM_Name, std::ifstream::in);
   fileStream.get(ram + DEFAULT_CHAR_ROM_BASE_ADDR, 4096);
   fileStream.close();
-
   for(int i = 0; i < 2024; i++)
   {
-    ram[i+DEFAULT_SCREEN_RAM_BASE_ADDR] = 76;
+    ram[i+DEFAULT_SCREEN_RAM_BASE_ADDR] = 32; //Empty char
   }
+
+  fileStream.open(executableName, std::ifstream::in);
+  fileStream.get(ram, 1024);
+  fileStream.close();
 
 }
 
