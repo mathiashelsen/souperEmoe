@@ -56,7 +56,7 @@ int VICII::runNextOperation(int CPU_CyclesPassed)
       cellsToCopy = VIDEO_TOTAL_WIDTH-colCtr;
   }
 
-  char lineOfChar = rowCtr % 8;
+  char lineOfChar = (rowCtr-1) % 8;
 
   /*
    * COPY REQUIRED PIXELS (IF ANY)
