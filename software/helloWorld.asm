@@ -4,7 +4,7 @@ start:
   jsr draw_text
 
 msg:
-  !scr "   Hello world"
+  !scr "   hello world"
 
 draw_text:
   ldx #$00
@@ -15,4 +15,4 @@ draw_loop:
   inx
   cpx #$0e
   bne draw_loop
-  jsr draw_text
+  jmp draw_text
