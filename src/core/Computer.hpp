@@ -7,7 +7,7 @@
 #include "Memory.hpp"
 //#include "DummyMemory.hpp"
 #include "CPU.hpp"
-#include "CPU_6510.hpp"
+#include "CPU_6502.hpp"
 #include "Video.hpp"
 #include "VICII.hpp"
 //#include "BouncingBallVideo.hpp"
