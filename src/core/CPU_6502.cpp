@@ -93,7 +93,9 @@ int CPU_6502::runNextOperation()
           acc = acc + operand;
           break;
         case 0b100: // STA;
-          _memory->write(operand, acc);
+          // The strange duck in the crowd... we discard the previous read, but
+          // replace it with a write to memory.
+          _memory->write(address, acc);
           break;
         case 0b101: // LDA;
           acc = operand;
