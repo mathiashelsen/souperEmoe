@@ -23,11 +23,11 @@ int CPU_6510::runNextOperation()
   uint8_t op1;
   uint8_t op2;
 
-  std::cout << pc << ": ";
+  //std::cout << pc << ": ";
 
   if(instruction == 0x20)
   {
-    std::cout << "JSR" << std::endl;
+    //std::cout << "JSR" << std::endl;
     pc++;
     op1 = _memory->read(pc);
     pc++;
@@ -42,7 +42,7 @@ int CPU_6510::runNextOperation()
   // LDX; Imm
   if(instruction == 0xA2)
   {
-    std::cout << "LDX" << std::endl;
+    //std::cout << "LDX" << std::endl;
     pc++;
     op1 = _memory->read(pc);
     reg_x = op1;
@@ -133,7 +133,7 @@ int CPU_6510::runNextOperation()
   // LDA, ZP,X
   if(instruction == 0xB5)
   {
-    std::cout << "LDA" << std::endl;
+    //std::cout << "LDA" << std::endl;
     pc++;
     op1 = _memory->read(pc);
     acc = _memory->read(op1+reg_x);
@@ -152,7 +152,7 @@ int CPU_6510::runNextOperation()
   // STA, Abs, X
   if(instruction == 0x9D)
   { 
-    std::cout << "STA" << std::endl;
+    //std::cout << "STA" << std::endl;
     pc++;
     op1 = _memory->read(pc);
     pc++;
@@ -165,7 +165,7 @@ int CPU_6510::runNextOperation()
 
   if(instruction == 0xE8)
   {
-    std::cout << "INX" << std::endl;
+    //std::cout << "INX" << std::endl;
     reg_x = (reg_x + 1) % 0xff;
  
     if(reg_x == 0)
@@ -181,7 +181,7 @@ int CPU_6510::runNextOperation()
 
   if(instruction == 0xE0)
   {
-    std::cout << "CPX" << std::endl;
+    //std::cout << "CPX" << std::endl;
     pc++;
     op1 = _memory->read(pc);
 
@@ -211,7 +211,7 @@ int CPU_6510::runNextOperation()
 
   if(instruction == 0xD0)
   {
-    std::cout << "BNE" << std::endl;
+    //std::cout << "BNE" << std::endl;
     pc++;
     op1 = _memory->read(pc);
     if(status.Z == 0)
@@ -228,7 +228,7 @@ int CPU_6510::runNextOperation()
 
   if(instruction == 0x4C)
   {
-    std::cout << "JMP" << std::endl;
+    //std::cout << "JMP" << std::endl;
     pc++;
     op1 = _memory->read(pc);
     pc++;
@@ -240,7 +240,7 @@ int CPU_6510::runNextOperation()
     
   }
 
-  std::cout << "Unknown instruction" << std::endl;
+  //std::cout << "Unknown instruction" << std::endl;
   pc++;
   return 2;
 }
