@@ -25,8 +25,8 @@ VICII::VICII(fifo<unsigned char*>* videoStream, Memory* memory, int OSR) : Video
   colCtr = 0;
   rowCtr = 0;
 
-  frontColor  = colormap[5];
-  backColor   = colormap[7];
+  frontColor  = colormap[14];
+  backColor   = colormap[6];
 
   p             = (unsigned char*) malloc(SCREEN_XSIZE*SCREEN_YSIZE*4*_OSR*_OSR);
   memset((void *)p, 0, SCREEN_XSIZE*SCREEN_YSIZE*4*_OSR*_OSR);
