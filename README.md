@@ -32,7 +32,7 @@ The emulation will be operation accurate, but not cycle accurate. I don't think 
 ![alt text](https://github.com/mathiashelsen/souperEmoe/blob/main/software/screenshotHelloWorld.png?raw=true)
 
 # What's TODO?
-* Efficiently implement the full instruction set and write unit tests
+* Efficiently implement the full instruction set and write unit tests. A great starting point/reference is: https://llx.com/Neil/a2/opcodes.html
 * Memory map: make sure everything is where it should be, add paging, ...
 * Memory map: implement that registers of the VICII are correctly updated from memory writes
 * VIC-II: really implement to required display modes, update to the correct colors (the current ones are looking bad).
