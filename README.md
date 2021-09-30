@@ -29,6 +29,7 @@ The emulation will be operation accurate, but not cycle accurate. I don't think 
 # What's working?
 * Basic graphics output via X11: a character ROM is loaded to the correct location and you can run "hello world".
 * There is some memory and a few instructions available, you can run "helloWorld.asm"
+![alt text](https://github.com/mathiashelsen/souperEmoe/blob/main/software/screenshotHelloWorld.png?raw=true)
 
 # What's TODO?
 * Efficiently implement the full instruction set and write unit tests
