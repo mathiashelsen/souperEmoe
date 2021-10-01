@@ -61,6 +61,7 @@ char Memory::read(int addr)
 
 void Memory::write(int addr, char data)
 {
+  printf("Writing value 0x%02X to address %04X\n", (uint8_t) data, (uint16_t) addr);
   if(addr < ramSize)
     ram[addr] = data;
 }

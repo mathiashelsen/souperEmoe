@@ -80,6 +80,31 @@ void lda_runtest(void)
     printf("Incorrect read from memory at 0x11ff, got 0x%02X, expected 0xff\n", (uint8_t) computer->memory->read(0x11ff));
   }
 
+  computer->run(2);
+  status = computer->cpu->getStatus();
+  if((uint8_t) computer->cpu->getAcc() != 0xff)
+  {
+    errorCount++;
+    printf("Acc = 0x%02X, expected 0xff\n", (uint8_t) computer->cpu->getAcc());
+  }
+  if( status.N == 0 || status.Z == 1)
+  {
+    errorCount++;
+    printf("Incorrectly updated N/Z flags: %d/%d, expected 1/0\n", status.N, status.Z);
+  }
+
+  computer->run(1);
+  if( (uint8_t) computer->cpu->getX() != 0x01 )
+  {
+    printf("RegX = 0x%02x, expected 0x01\n", (uint8_t) computer->cpu->getX());
+  }
+  computer->run(2);
+  if( (uint8_t) computer->memory->read(0x0045) != 0x02 )
+  {
+    errorCount++;
+    printf("Incorrect read from memory at 0x0045, got 0x%02X, expected 0x02\n", (uint8_t) computer->memory->read(0x0045));
+  }
+
 
   delete computer;
 

@@ -63,7 +63,12 @@ int CPU_6502::runNextOperation()
       pc      += 1;
       break;
     case ZPX: // ZP, x -- Good
+      address = op1 + reg_x;
       operand = _memory->read(op1 + reg_x); 
+      pc      += 1;
+      break;
+    case ZPY: // ZP, x -- Good
+      operand = _memory->read(op1 + reg_y); 
       pc      += 1;
       break;
     case AbsY: // Abs, y -- Good
@@ -87,6 +92,14 @@ int CPU_6502::runNextOperation()
       case LDA:
         acc = operand;
         this->updateFlagsNZ(acc);
+        break;
+      case LDX:
+        reg_x = operand;
+        this->updateFlagsNZ(reg_x);
+        break;
+      case LDY:
+        reg_y = operand;
+        this->updateFlagsNZ(reg_y);
         break;
       case STA:
         _memory->write(address, acc);
