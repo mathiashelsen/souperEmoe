@@ -4,6 +4,8 @@
 #include <iostream>
 
 #include "CPU.hpp"
+#include "ISA_6502.hpp"
+
 
 class CPU_6502 : public CPU
 {
