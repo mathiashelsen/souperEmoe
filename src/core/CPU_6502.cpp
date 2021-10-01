@@ -35,6 +35,8 @@ int CPU_6502::runNextOperation()
 
   pc++;
 
+  printf("PC = %04X\n", (uint16_t) pc);
+
   switch(decodInstr._addrMode)
   {
     case _ZPX_: // (ZP, X) -- Good

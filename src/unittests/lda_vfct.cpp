@@ -119,12 +119,14 @@ void lda_runtest(void)
     printf("Acc = 0x%02X, expected 0xEE\n", (uint8_t) computer->cpu->getAcc());
   }
 
-  computer->run(6);
-  if( (uint8_t) computer->cpu->getAcc() != 0xBB)
-  {
-    errorCount++;
-    printf("Acc = 0x%02X, expected 0xBB\n", (uint8_t) computer->cpu->getAcc());
-  }
+  //computer->run(11);
+  //if( (uint8_t) computer->cpu->getAcc() != 0xBB)
+  //{
+  //  errorCount++;
+  //  printf("Acc = 0x%02X, expected 0xBB\n", (uint8_t) computer->cpu->getAcc());
+  //}
+
+  computer->run(1);
  
 
 
