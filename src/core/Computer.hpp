@@ -19,8 +19,6 @@
 class Computer
 {
   protected:
-    Memory* memory;
-    CPU*    cpu;
     Video*  video;
     bool    reset;
     int     _OSR;
@@ -28,8 +26,12 @@ class Computer
     std::chrono::high_resolution_clock::time_point startOfFrame;
     std::chrono::high_resolution_clock::time_point endOfFrame;
   public:
+    Memory*   memory;
+    CPU_6502* cpu;
     Computer(fifo<unsigned char*>* videoStream, int OSR);
+    Computer(fifo<unsigned char*>* videoStream, int OSR, const char* objectCodeFilename);
     void run();
+    void run(int nInstructions);
 };
 
 #endif

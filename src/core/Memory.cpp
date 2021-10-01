@@ -23,6 +23,29 @@ Memory::Memory(int nBytes)
 
 }
 
+Memory::Memory(int nBytes, const char* objectCodeFilename)
+{
+  ram     = (char *)malloc(nBytes);
+  ramSize = nBytes;
+
+  memset(ram, 0, nBytes);
+
+  std::ifstream fileStream;
+
+  fileStream.open(charROM_Name, std::ifstream::in);
+  fileStream.get(ram + DEFAULT_CHAR_ROM_BASE_ADDR, 4096);
+  fileStream.close();
+  for(int i = 0; i < 2024; i++)
+  {
+    ram[i+DEFAULT_SCREEN_RAM_BASE_ADDR] = 32; //Empty char
+  }
+
+  fileStream.open(objectCodeFilename, std::ifstream::in);
+  fileStream.get(ram, 1024);
+  fileStream.close();
+
+}
+
 Memory::~Memory()
 {
   free(ram);

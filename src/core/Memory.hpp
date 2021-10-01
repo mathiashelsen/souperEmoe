@@ -18,6 +18,7 @@ class Memory
     int   ramSize; 
   public:
     Memory(int nBytes);
+    Memory(int nBytes, const char *objectCodeFilename);
     ~Memory();
     virtual char read(int addr);
     virtual void write(int addr, char data);

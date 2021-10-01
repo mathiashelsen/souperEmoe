@@ -13,17 +13,12 @@
 
 #include "core/Computer.hpp"
 
+#include "unittests/lda_vfct.hpp"
+
 
 int main(int argc, char **argv)
 {
-  int OSR = 3;
-  fifo<unsigned char *> videoStream;
-  render_X11 videoOutput = render_X11( &videoStream, OSR);
-  std::thread videoThread( &render_X11::run, &videoOutput );
+  lda_runtest();
 
-  Computer *computer = new Computer(&videoStream, OSR);
-  computer->run();  
-
-  delete computer;
   return EXIT_SUCCESS;
 }

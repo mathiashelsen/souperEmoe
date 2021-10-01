@@ -64,13 +64,13 @@ MY_CFLAGS =
 MY_LIBS   = -lm -lX11 -lpthread
 
 # The pre-processor options used by the cpp (man cpp for more).
-CPPFLAGS  = -Wall -O3  -lX11 -fpermissive -lpthread
+CPPFLAGS  = -Wall -g   -lX11 -fpermissive -lpthread
 
 # The options used in linking as well as in any direct use of ld.
 LDFLAGS   = -lm -lX11
 # The directories in which source files reside.
 # If not specified, only the current directory will be serached.
-SRCDIRS   = src src/core src/aux
+SRCDIRS   = src src/core src/aux src/unittests
 
 # The executable file name.
 # If not specified, current directory name or `a.out' will be used.

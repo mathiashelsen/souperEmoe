@@ -2,6 +2,11 @@
 
 CPU_6502::CPU_6502(Memory *  memory) : CPU(memory)
 {
+  this->reset();
+}
+
+void CPU_6502::reset(void)
+{
   acc     = 0;
   reg_x   = 0;
   reg_y   = 0;
@@ -26,95 +31,67 @@ int CPU_6502::runNextOperation()
   uint8_t   operand     = 0;
   int       retVal      = 0;
 
-  uint8_t a, b, c;
-  a = instruction & 0b11;
-  b = (instruction >> 2) & 0b111;
-  c = (instruction >> 5) & 0b111;
+  instrType decodInstr  = instr[instruction];
 
   pc++;
 
-  switch(c)
+  switch(decodInstr._addrMode)
   {
-    case(0b01):
-      switch(b)
-      {
-        case 0b000: // (ZP, X) -- Good
-          address = _memory->read(op1 + reg_x) | (_memory->read(op1 + reg_x + 1) << 8);
-          operand = _memory->read(address);
-          pc      += 1;
-          break;
-        case 0b001: // ZP -- Good
-          operand = _memory->read(op1);
-          pc      += 1;
-          break;
-        case 0b010: // Imm -- Good
-          operand = op1;
-          pc      += 1;
-          break;
-        case 0b011: // Abs -- Good
-          address = op1 | (op2 << 8);
-          operand = _memory->read(address);
-          pc     += 2;
-          break;
-        case 0b100: // (ZP), y -- Good
-          address = _memory->read(op1);
-          address = (_memory->read(address) | (_memory->read(address+1) << 8)) + reg_y;
-          operand = _memory->read(address);
-          pc      += 1;
-          break;
-        case 0b101: // ZP, x -- Good
-          operand = _memory->read(op1 + reg_x); 
-          pc      += 1;
-          break;
-        case 0b110: // Abs, y -- Good
-          address = (op1 | (op2 << 8)) + reg_y;
-          operand = _memory->read(address);
-          pc      += 2;
-          break;
-        case 0b111: // Abs, x -- Good
-          address = (op1 | (op2 << 8)) + reg_x;
-          operand = _memory->read(address);
-          pc      += 2;
-          break;
-      }
-
-      switch(a)
-      {
-        case 0b000: // ORA
-          acc = acc | operand;
-          break;
-        case 0b001: // AND
-          acc = acc & operand;
-          break;
-        case 0b010: // EOR
-          acc = acc ^ operand;
-          break;
-        case 0b011: // ADC
-          acc = acc + operand;
-          break;
-        case 0b100: // STA;
-          // The strange duck in the crowd... we discard the previous read, but
-          // replace it with a write to memory.
-          _memory->write(address, acc);
-          break;
-        case 0b101: // LDA;
-          acc = operand;
-          break;
-        case 0b110: // CMP;
-          // TODO
-          break;
-        case 0b111: // SBC;
-          acc = acc - operand;
-          break;
-        default:
-          std::cout << "Unknown instruction " << std::endl;
-      }
-    default:
-      std::cout << "Unknown instruction" << std::endl;
+    case _ZPX_: // (ZP, X) -- Good
+      address = _memory->read(op1 + reg_x) | (_memory->read(op1 + reg_x + 1) << 8);
+      operand = _memory->read(address);
+      pc      += 1;
+      break;
+    case ZP: // ZP -- Good
+      operand = _memory->read(op1);
+      pc      += 1;
+      break;
+    case Imm: // Imm -- Good
+      operand = op1;
+      pc      += 1;
+      break;
+    case Abs: // Abs -- Good
+      address = op1 | (op2 << 8);
+      operand = _memory->read(address);
+      pc     += 2;
+      break;
+    case _ZP_Y: // (ZP), y -- Good
+      address = _memory->read(op1);
+      address = (_memory->read(address) | (_memory->read(address+1) << 8)) + reg_y;
+      operand = _memory->read(address);
+      pc      += 1;
+      break;
+    case ZPX: // ZP, x -- Good
+      operand = _memory->read(op1 + reg_x); 
+      pc      += 1;
+      break;
+    case AbsY: // Abs, y -- Good
+      address = (op1 | (op2 << 8)) + reg_y;
+      operand = _memory->read(address);
+      pc      += 2;
+      break;
+    case AbsX: // Abs, x -- Good
+      address = (op1 | (op2 << 8)) + reg_x;
+      operand = _memory->read(address);
+      pc      += 2;
+      break;
+    case Impl:
+      break;
   }
 
+  switch(decodInstr._opCode)
+  {
+      case NOP:
+        std::cout << "NOP" << std::endl;
+        break;
+      case LDA:
+        std::cout << "LDA" << std::endl;
+        acc = operand;
+        break;
+      default:
+        std::cout << "Unknown instruction" << std::endl;
+        break;
+  }
 
-  //std::cout << "Unknown instruction" << std::endl;
-  pc++;
   return 2;
 }

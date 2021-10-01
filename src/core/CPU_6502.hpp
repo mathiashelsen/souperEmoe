@@ -10,11 +10,11 @@
 class CPU_6502 : public CPU
 {
   protected:
-    int   acc;
-    int   reg_x;
-    int   reg_y;
-    int   pc;
-    int   sp;
+    char      acc;
+    char      reg_x;
+    char      reg_y;
+    int       pc;
+    int       sp;
     struct {
       unsigned int N : 1;
       unsigned int V : 1;
@@ -28,7 +28,13 @@ class CPU_6502 : public CPU
 
   public:
     CPU_6502(Memory* memory);
+    void reset(void);
     int runNextOperation(void);
+    char  getAcc(void)  { return acc; };
+    char  getX(void)    { return reg_x; };
+    char  getY(void)    { return reg_y; };
+    int   getPC(void)   { return pc; }
+    int   getSP(void)   { return sp; }
 
 };
 

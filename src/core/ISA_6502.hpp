@@ -13,7 +13,7 @@ typedef enum {
   CMP,
   SBC,
   NOP
-} opCode_type;
+} opCodeType;
 
 typedef enum {
   _ZPX_,
@@ -25,15 +25,15 @@ typedef enum {
   AbsY,
   AbsX,
   Impl
-} addrMode_type;
+} addrModeType;
 
 typedef struct {
   uint8_t       _hexCode;
-  opCode_type   _opCode;
-  addrMode_type _addrMode;
-} instr_type;
+  opCodeType    _opCode;
+  addrModeType  _addrMode;
+} instrType;
 
-static instr_type instr[256] =
+static instrType instr[256] =
 {
   {0x00, NOP, Impl},
   {0x01, NOP, Impl},
@@ -196,35 +196,35 @@ static instr_type instr[256] =
   {0x9e, NOP, Impl},
   {0x9f, NOP, Impl},
   {0xa0, NOP, Impl},
-  {0xa1, NOP, Impl},
+  {0xa1, LDA, _ZPX_},
   {0xa2, NOP, Impl},
   {0xa3, NOP, Impl},
   {0xa4, NOP, Impl},
-  {0xa5, NOP, Impl},
+  {0xa5, LDA, ZP},
   {0xa6, NOP, Impl},
   {0xa7, NOP, Impl},
   {0xa8, NOP, Impl},
-  {0xa9, NOP, Impl},
+  {0xa9, LDA, Imm},
   {0xaa, NOP, Impl},
   {0xab, NOP, Impl},
   {0xac, NOP, Impl},
-  {0xad, NOP, Impl},
+  {0xad, LDA, Abs},
   {0xae, NOP, Impl},
   {0xaf, NOP, Impl},
   {0xb0, NOP, Impl},
-  {0xb1, NOP, Impl},
+  {0xb1, LDA, _ZP_Y},
   {0xb2, NOP, Impl},
   {0xb3, NOP, Impl},
   {0xb4, NOP, Impl},
-  {0xb5, NOP, Impl},
+  {0xb5, LDA, ZPX},
   {0xb6, NOP, Impl},
   {0xb7, NOP, Impl},
   {0xb8, NOP, Impl},
-  {0xb9, NOP, Impl},
+  {0xb9, LDA, AbsY},
   {0xba, NOP, Impl},
   {0xbb, NOP, Impl},
   {0xbc, NOP, Impl},
-  {0xbd, NOP, Impl},
+  {0xbd, LDA, AbsX},
   {0xbe, NOP, Impl},
   {0xbf, NOP, Impl},
   {0xc0, NOP, Impl},
