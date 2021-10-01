@@ -58,7 +58,7 @@ int CPU_6502::runNextOperation()
       break;
     case _ZP_Y: // (ZP), y -- Good
       address = _memory->read(op1);
-      address = (_memory->read(address) | (_memory->read(address+1) << 8)) + reg_y;
+      address = (address + reg_y) | ((address + 1) << 8);
       operand = _memory->read(address);
       pc      += 1;
       break;
@@ -90,18 +90,22 @@ int CPU_6502::runNextOperation()
       case NOP:
         break;
       case LDA:
+        std::cout << "LDA" << std::endl;
         acc = operand;
         this->updateFlagsNZ(acc);
         break;
       case LDX:
+        std::cout << "LDX" << std::endl;
         reg_x = operand;
         this->updateFlagsNZ(reg_x);
         break;
       case LDY:
+        std::cout <<"LDY" << std::endl;
         reg_y = operand;
         this->updateFlagsNZ(reg_y);
         break;
       case STA:
+        std::cout << "STA" << std::endl;
         _memory->write(address, acc);
         break;
       default:

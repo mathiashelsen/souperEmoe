@@ -53,6 +53,7 @@ Memory::~Memory()
 
 char Memory::read(int addr)
 {
+  printf("Reading value 0x%02X from 0x%04X\n", (uint8_t) ram[addr], (uint16_t) addr);
   if(addr < ramSize)
     return ram[addr];
   else

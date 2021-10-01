@@ -105,6 +105,28 @@ void lda_runtest(void)
     printf("Incorrect read from memory at 0x0045, got 0x%02X, expected 0x02\n", (uint8_t) computer->memory->read(0x0045));
   }
 
+  computer->run(2);
+  if( (uint8_t) computer->cpu->getAcc() != 0x02 )
+  {
+    errorCount++;
+    printf("Acc = 0x%02X, expected 0x02\n", (uint8_t) computer->cpu->getAcc());
+  }
+
+  computer->run(8);
+  if( (uint8_t) computer->cpu->getAcc() != 0xEE)
+  {
+    errorCount++;
+    printf("Acc = 0x%02X, expected 0xEE\n", (uint8_t) computer->cpu->getAcc());
+  }
+
+  computer->run(6);
+  if( (uint8_t) computer->cpu->getAcc() != 0xBB)
+  {
+    errorCount++;
+    printf("Acc = 0x%02X, expected 0xBB\n", (uint8_t) computer->cpu->getAcc());
+  }
+ 
+
 
   delete computer;
 
