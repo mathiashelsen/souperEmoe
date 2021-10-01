@@ -1,5 +1,10 @@
 #include "lda_vfct.hpp"
 
+/*
+ * This is a unit test to see if LDA/STA is working as intended.
+ * For this test to run successfull, it required the correct 
+ * lda_test.o object code. 
+ */
 void lda_runtest(void)
 {
   int errorCount = 0;
