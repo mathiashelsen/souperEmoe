@@ -43,7 +43,8 @@ int CPU_6502::runNextOperation()
       pc      += 1;
       break;
     case ZP: // ZP -- Good
-      operand = _memory->read(op1);
+      address = op1;
+      operand = _memory->read(address);
       pc      += 1;
       break;
     case Imm: // Imm -- Good
@@ -86,6 +87,9 @@ int CPU_6502::runNextOperation()
       case LDA:
         acc = operand;
         this->updateFlagsNZ(acc);
+        break;
+      case STA:
+        _memory->write(address, acc);
         break;
       default:
         std::cout << "Unknown instruction" << std::endl;
