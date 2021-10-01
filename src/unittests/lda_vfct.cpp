@@ -15,13 +15,62 @@ void lda_runtest(void)
   std::thread videoThread( &render_X11::run, &videoOutput );
 
   Computer *computer = new Computer(&videoStream, OSR, "software/lda_test.o");
+
+  /*
+   * Test for LDA,Imm -> Negative number
+   */
   computer->run(1);
+  statusType status = computer->cpu->getStatus();
   if((uint8_t) computer->cpu->getAcc() != 0xef)
   {
     errorCount++;
     printf("Acc = 0x%02X, expected 0xEF\n", (uint8_t) computer->cpu->getAcc());
   }
+  if( status.N == 0 || status.Z == 1)
+  {
+    errorCount++;
+    printf("Incorrectly updated N/Z flags: %d/%d, expected 1/0\n", status.N, status.Z);
+  }
+
+
+  /*
+   * Test for LDA,Imm -> Positive number
+   */
+  computer->run(1);
+  status = computer->cpu->getStatus();
+  if((uint8_t) computer->cpu->getAcc() != 0x0f)
+  {
+    errorCount++;
+    printf("Acc = 0x%02X, expected 0x0F\n", (uint8_t) computer->cpu->getAcc());
+  }
+  if( status.N == 1 || status.Z == 1)
+  {
+    errorCount++;
+    printf("Incorrectly updated N/Z flags: %d/%d, expected 0/0\n", status.N, status.Z);
+  }
+
+
+  /*
+   * Test for LDA,Imm -> 0
+   */
+  computer->run(1);
+  status = computer->cpu->getStatus();
+  if((uint8_t) computer->cpu->getAcc() != 0x00)
+  {
+    errorCount++;
+    printf("Acc = 0x%02X, expected 0x00\n", (uint8_t) computer->cpu->getAcc());
+  }
+  if( status.N == 1 || status.Z == 0)
+  {
+    errorCount++;
+    printf("Incorrectly updated N/Z flags: %d/%d, expected 0/1\n", status.N, status.Z);
+  }
 
   delete computer;
-  printf("Total number of errors found: %d\n", errorCount);
+
+  if(errorCount == 0)
+    printf("LDA Unit Test: PERFECT SCORE\n");
+  else
+    printf("LDA Unit Test: Total number of errors found: %d\n", errorCount);
+
 }

@@ -82,11 +82,10 @@ int CPU_6502::runNextOperation()
   switch(decodInstr._opCode)
   {
       case NOP:
-        std::cout << "NOP" << std::endl;
         break;
       case LDA:
-        std::cout << "LDA" << std::endl;
         acc = operand;
+        this->updateFlagsNZ(acc);
         break;
       default:
         std::cout << "Unknown instruction" << std::endl;
@@ -94,4 +93,18 @@ int CPU_6502::runNextOperation()
   }
 
   return 2;
+}
+
+void CPU_6502::updateFlagsNZ(char regVal)
+{
+  if(regVal < 0)
+    status.N = 1;
+  else
+    status.N = 0;
+
+
+  if(regVal == 0)
+    status.Z = 1;
+  else
+    status.Z = 0;
 }
