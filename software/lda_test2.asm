@@ -10,3 +10,10 @@ lda #$81
 sta $3104
 ldy #$e9
 lda ($a4),y
+
+lda #$04
+sta $3a
+lda #$31
+sta $3b
+ldx #$e9
+lda ($51,x)

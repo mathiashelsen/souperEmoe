@@ -18,7 +18,7 @@
 
 int main(int argc, char **argv)
 {
-  lda_runtest();
+  lda_runtest2();
 
   return EXIT_SUCCESS;
 }

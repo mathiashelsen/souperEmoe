@@ -19,5 +19,6 @@
 #include "../core/Computer.hpp"
 
 void lda_runtest(void);
+void lda_runtest2(void);
 
 #endif

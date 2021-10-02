@@ -59,8 +59,8 @@ int CPU_6502::runNextOperation()
       pc     += 2;
       break;
     case _ZP_Y: // (ZP), y -- Good
-      address = _memory->read(op1);
-      address = (address + reg_y) | ((address + 1) << 8);
+      address = _memory->read(op1) | (_memory->read(op1 + 1) << 8);
+      address += (uint8_t) reg_y; // Required for add-with-carry
       operand = _memory->read(address);
       pc      += 1;
       break;
