@@ -2,7 +2,7 @@
 
 Computer::Computer(fifo<unsigned char*>* videoStream, int OSR)
 {
-  memory  = new Memory(64000);
+  memory  = new Memory(0xffff);
   cpu     = new CPU_6502(memory);
   video   = new VICII(videoStream, memory, OSR);
   //video   = new BouncingBallVideo(videoStream, memory);
@@ -11,7 +11,7 @@ Computer::Computer(fifo<unsigned char*>* videoStream, int OSR)
 
 Computer::Computer(fifo<unsigned char*>* videoStream, int OSR, const char* objectCodeFilename)
 {
-  memory  = new Memory(64000, objectCodeFilename);
+  memory  = new Memory(0xffff, objectCodeFilename);
   cpu     = new CPU_6502(memory);
   video   = new VICII(videoStream, memory, OSR);
 

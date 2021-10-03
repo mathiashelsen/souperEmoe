@@ -10,7 +10,7 @@ void CPU_6502::reset(void)
   acc     = 0;
   reg_x   = 0;
   reg_y   = 0;
-  pc      = 0;
+  pc      = (uint8_t) _memory->read(RST_VECTOR) | (((uint8_t) _memory->read(RST_VECTOR+1)) << 8);
   sp      = DEFAULT_STACK_BASE_ADDR;
 
   status.N = 0;

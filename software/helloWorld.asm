@@ -1,4 +1,4 @@
-*=$0000
+*=$c000
 
 start:
   jsr draw_text

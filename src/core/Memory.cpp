@@ -18,8 +18,12 @@ Memory::Memory(int nBytes)
   }
 
   fileStream.open(executableName, std::ifstream::in);
-  fileStream.get(ram, 1024);
+  fileStream.get(ram+0xc000, 1024);
   fileStream.close();
+
+  // Set the PC at RST to 0xC000
+  ram[RST_VECTOR]   = 0x00;
+  ram[RST_VECTOR+1] = 0xC0;
 
 }
 
@@ -41,9 +45,12 @@ Memory::Memory(int nBytes, const char* objectCodeFilename)
   }
 
   fileStream.open(objectCodeFilename, std::ifstream::in);
-  fileStream.get(ram, 1024);
+  fileStream.get(ram+0xc000, 1024);
   fileStream.close();
 
+  // Set the PC at RST to 0xC000
+  ram[RST_VECTOR]   = 0x00;
+  ram[RST_VECTOR+1] = 0xC0;
 }
 
 Memory::~Memory()
