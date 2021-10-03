@@ -114,6 +114,22 @@ int CPU_6502::runNextOperation()
         _memory->write(address, operand-1);
         this->updateFlagsNZ(operand-1);
         break;
+      case TAX:
+        reg_x = acc;
+        this->updateFlagsNZ(reg_x);
+        break;
+      case TAY:
+        reg_y = acc;
+        this->updateFlagsNZ(reg_y);
+        break;
+      case TXA:
+        acc = reg_x;
+        this->updateFlagsNZ(acc);
+        break;
+      cae TYA:
+        acc = reg_y;
+        this->updateFlagsNZ(acc);
+        break;
       default:
         std::cout << "Unknown instruction" << std::endl;
         break;

@@ -18,7 +18,11 @@ typedef enum {
   LDY,
   STY,
   DEC,
-  INC
+  INC,
+  TAX,
+  TAY,
+  TXA,
+  TYA
 } opCodeType;
 
 typedef enum {
@@ -180,7 +184,7 @@ static instrType instr[256] =
   {0x87, NOP, Impl},
   {0x88, NOP, Impl},
   {0x89, NOP, Impl},
-  {0x8a, NOP, Impl},
+  {0x8a, TXA, Impl},
   {0x8b, NOP, Impl},
   {0x8c, NOP, Impl},
   {0x8d, STA, Abs},
@@ -194,7 +198,7 @@ static instrType instr[256] =
   {0x95, STA, ZPX},
   {0x96, NOP, Impl},
   {0x97, NOP, Impl},
-  {0x98, NOP, Impl},
+  {0x98, TYA, Impl},
   {0x99, STA, AbsY},
   {0x9a, NOP, Impl},
   {0x9b, NOP, Impl},
@@ -210,9 +214,9 @@ static instrType instr[256] =
   {0xa5, LDA, ZP},
   {0xa6, LDX, ZP},
   {0xa7, NOP, Impl},
-  {0xa8, NOP, Impl},
+  {0xa8, TAY, Impl},
   {0xa9, LDA, Imm},
-  {0xaa, NOP, Impl},
+  {0xaa, TAX, Impl},
   {0xab, NOP, Impl},
   {0xac, LDY, Abs},
   {0xad, LDA, Abs},
