@@ -10,7 +10,7 @@ void CPU_6502::reset(void)
   acc     = 0;
   reg_x   = 0;
   reg_y   = 0;
-  pc      = (uint8_t) _memory->read(RST_VECTOR) | (((uint8_t) _memory->read(RST_VECTOR+1)) << 8);
+  pc      = _memory->read(RST_VECTOR) | (_memory->read(RST_VECTOR+1) << 8);
   sp      = DEFAULT_STACK_BASE_ADDR;
 
   status.N = 0;
@@ -29,7 +29,7 @@ int CPU_6502::runNextOperation()
   uint8_t   op2         = _memory->read(pc+2);
   uint16_t  address     = 0;
   uint8_t   operand     = 0;
-  int       retVal      = 0;
+  int       retVal      = 2;
 
   instrType decodInstr  = instr[instruction];
 
@@ -60,12 +60,12 @@ int CPU_6502::runNextOperation()
       break;
     case _ZP_Y: // (ZP), y -- Good
       address = _memory->read(op1) | (_memory->read(op1 + 1) << 8);
-      address += (uint8_t) reg_y; // Required for add-with-carry
+      address += (uint8_t) reg_y; // Required for add-with-carry, y=0xEF is positive and increases address
       operand = _memory->read(address);
       pc      += 1;
       break;
     case ZPX: // ZP, x -- Good
-      address = op1 + reg_x;
+      address = op1 + reg_x; // Add-without-carry, e.g. x=0xEF is negative and decreases address
       operand = _memory->read(op1 + reg_x); 
       pc      += 1;
       break;
@@ -115,7 +115,7 @@ int CPU_6502::runNextOperation()
         break;
   }
 
-  return 2;
+  return retVal;
 }
 
 void CPU_6502::updateFlagsNZ(char regVal)

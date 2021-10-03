@@ -56,7 +56,7 @@ int BouncingBallVideo::runNextOperation(int CPU_CyclesPassed)
     unsigned char *p = (unsigned char*) malloc(SCREEN_XSIZE*SCREEN_YSIZE*4);
     memset((void *)p, 0, SCREEN_XSIZE*SCREEN_YSIZE*4);
    
-    int ballPixel = (ball_x + ball_y*SCREEN_XSIZE)*3;
+    //int ballPixel = (ball_x + ball_y*SCREEN_XSIZE)*3;
     *((uint32_t *)p + ball_x + ball_y*SCREEN_XSIZE) = 0xffffff;
     *((uint32_t *)p + ball_x-1 + ball_y*SCREEN_XSIZE) = 0xffffff;
     *((uint32_t *)p + ball_x-2 + ball_y*SCREEN_XSIZE) = 0xffffff;

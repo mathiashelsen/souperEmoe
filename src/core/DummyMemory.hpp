@@ -12,12 +12,12 @@ class DummyMemory : public Memory
 {
   protected:
     const char* charROM_Name = "resources/c64.bin";
-    char*       charROM;
-    char*       videoRAM;
+    uint8_t*    charROM;
+    uint8_t*    videoRAM;
   public:
     DummyMemory(int nBytes);
     ~DummyMemory();
-    char read(int addr);
+    uint8_t read(int addr);
 };
 
 #endif

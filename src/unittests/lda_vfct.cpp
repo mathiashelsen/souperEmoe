@@ -11,8 +11,8 @@ void lda_runtest2(void)
   int OSR        = 3;
 
   fifo<unsigned char *> videoStream;
-  render_X11 videoOutput = render_X11( &videoStream, OSR);
-  std::thread videoThread( &render_X11::run, &videoOutput );
+  //render_X11 videoOutput = render_X11( &videoStream, OSR);
+  //std::thread videoThread( &render_X11::run, &videoOutput );
 
   Computer *computer = new Computer(&videoStream, OSR, "software/lda_test2.o");
 
@@ -46,8 +46,8 @@ void lda_runtest(void)
   int OSR        = 3;
 
   fifo<unsigned char *> videoStream;
-  render_X11 videoOutput = render_X11( &videoStream, OSR);
-  std::thread videoThread( &render_X11::run, &videoOutput );
+  //render_X11 videoOutput = render_X11( &videoStream, OSR);
+  //std::thread videoThread( &render_X11::run, &videoOutput );
 
   Computer *computer = new Computer(&videoStream, OSR, "software/lda_test.o");
 
@@ -153,17 +153,6 @@ void lda_runtest(void)
     errorCount++;
     printf("Acc = 0x%02X, expected 0xEE\n", (uint8_t) computer->cpu->getAcc());
   }
-
-  //computer->run(11);
-  //if( (uint8_t) computer->cpu->getAcc() != 0xBB)
-  //{
-  //  errorCount++;
-  //  printf("Acc = 0x%02X, expected 0xBB\n", (uint8_t) computer->cpu->getAcc());
-  //}
-
-  computer->run(1);
- 
-
 
   delete computer;
 

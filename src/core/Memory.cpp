@@ -2,7 +2,7 @@
 
 Memory::Memory(int nBytes)
 {
-  ram     = (char *)malloc(nBytes);
+  ram     = (uint8_t *)malloc(nBytes);
   ramSize = nBytes;
 
   memset(ram, 0, nBytes);
@@ -10,7 +10,7 @@ Memory::Memory(int nBytes)
   std::ifstream fileStream;
 
   fileStream.open(charROM_Name, std::ifstream::in);
-  fileStream.get(ram + DEFAULT_CHAR_ROM_BASE_ADDR, 4096);
+  fileStream.get((char *)(ram + DEFAULT_CHAR_ROM_BASE_ADDR), 4096);
   fileStream.close();
   for(int i = 0; i < 2024; i++)
   {
@@ -18,7 +18,7 @@ Memory::Memory(int nBytes)
   }
 
   fileStream.open(executableName, std::ifstream::in);
-  fileStream.get(ram+0xc000, 1024);
+  fileStream.get((char*)(ram+0xc000), 1024);
   fileStream.close();
 
   // Set the PC at RST to 0xC000
@@ -29,7 +29,7 @@ Memory::Memory(int nBytes)
 
 Memory::Memory(int nBytes, const char* objectCodeFilename)
 {
-  ram     = (char *)malloc(nBytes);
+  ram     = (uint8_t *)malloc(nBytes);
   ramSize = nBytes;
 
   memset(ram, 0, nBytes);
@@ -37,7 +37,7 @@ Memory::Memory(int nBytes, const char* objectCodeFilename)
   std::ifstream fileStream;
 
   fileStream.open(charROM_Name, std::ifstream::in);
-  fileStream.get(ram + DEFAULT_CHAR_ROM_BASE_ADDR, 4096);
+  fileStream.get((char *) (ram + DEFAULT_CHAR_ROM_BASE_ADDR), 4096);
   fileStream.close();
   for(int i = 0; i < 2024; i++)
   {
@@ -45,7 +45,7 @@ Memory::Memory(int nBytes, const char* objectCodeFilename)
   }
 
   fileStream.open(objectCodeFilename, std::ifstream::in);
-  fileStream.get(ram+0xc000, 1024);
+  fileStream.get((char *)(ram+0xc000), 1024);
   fileStream.close();
 
   // Set the PC at RST to 0xC000
@@ -58,16 +58,16 @@ Memory::~Memory()
   free(ram);
 }
 
-char Memory::read(int addr)
+uint8_t Memory::read(int addr)
 {
   printf("Reading value 0x%02X from 0x%04X\n", (uint8_t) ram[addr], (uint16_t) addr);
   if(addr < ramSize)
     return ram[addr];
   else
-    return (char) 0;
+    return (uint8_t) 0;
 }
 
-void Memory::write(int addr, char data)
+void Memory::write(int addr, uint8_t data)
 {
   printf("Writing value 0x%02X to address %04X\n", (uint8_t) data, (uint16_t) addr);
   if(addr < ramSize)
