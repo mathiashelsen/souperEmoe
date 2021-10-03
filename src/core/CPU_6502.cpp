@@ -156,7 +156,7 @@ int CPU_6502::runNextOperation()
           acc             = result & 0xff;
           this->updateFlagsNZ(acc);
         }else{
-          // Its NMOS 6502 mode, to NVZ are invalid
+          // Its NMOS 6502 mode, to NV(Z) are invalid
           result          = ((uint8_t) acc + operand) + status.C;
           status.V        = ((acc ^ result) & (operand ^ result) & 0x80) >> 7;
           this->updateFlagsNZ(acc);
@@ -182,6 +182,15 @@ int CPU_6502::runNextOperation()
         break;
       case SEC:
         status.C = 1;
+        break;
+      case CLV:
+        status.V = 0;
+        break;
+      case CLI:
+        status.I = 0;
+        break;
+      case SEI:
+        status.I = 1;
         break;
       default:
         std::cout << "Unknown instruction" << std::endl;

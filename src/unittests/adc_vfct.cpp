@@ -24,7 +24,6 @@ void adc_runtest(void)
   computer->run(1);
   stat    = computer->cpu->getStatus();
   accVal  = (uint8_t) computer->cpu->getAcc();
-  printf("Acc value = 0x%02X, N=%d, Z=%d, V=%d, C=%d\n", accVal, stat.N, stat.Z, stat.V, stat.C);
   if(accVal != 0x00 || stat.N != 0 || stat.Z != 1 || stat.C != 1)
   {
     errorCount++;
@@ -34,7 +33,6 @@ void adc_runtest(void)
   computer->run(2);
   stat    = computer->cpu->getStatus();
   accVal  = (uint8_t) computer->cpu->getAcc();
-  printf("Acc value = 0x%02X, N=%d, Z=%d, V=%d, C=%d\n", accVal, stat.N, stat.Z, stat.V, stat.C);
   if(accVal != 0x0B || stat.N != 0 || stat.Z != 0 || stat.C != 1)
   {
     errorCount++;
@@ -44,7 +42,6 @@ void adc_runtest(void)
   computer->run(4);
   stat    = computer->cpu->getStatus();
   accVal  = (uint8_t) computer->cpu->getAcc();
-  printf("Acc value = 0x%02X, N=%d, Z=%d, V=%d, C=%d\n", accVal, stat.N, stat.Z, stat.V, stat.C);
   if(accVal != 0x93 || stat.C != 0)
   {
     errorCount++;
@@ -54,7 +51,6 @@ void adc_runtest(void)
   computer->run(1);
   stat    = computer->cpu->getStatus();
   accVal  = (uint8_t) computer->cpu->getAcc();
-  printf("Acc value = 0x%02X, N=%d, Z=%d, V=%d, C=%d\n", accVal, stat.N, stat.Z, stat.V, stat.C);
   if(accVal != 0x00 || stat.C != 1)
   {
     errorCount++;
@@ -64,7 +60,6 @@ void adc_runtest(void)
   computer->run(3);
   stat    = computer->cpu->getStatus();
   accVal  = (uint8_t) computer->cpu->getAcc();
-  printf("Acc value = 0x%02X, N=%d, Z=%d, V=%d, C=%d\n", accVal, stat.N, stat.Z, stat.V, stat.C);
   if(accVal != 0x50 || stat.C != 0)
   {
     errorCount++;

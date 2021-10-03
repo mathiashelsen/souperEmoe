@@ -30,7 +30,10 @@ typedef enum {
   SED,
   CLD,
   CLC,
-  SEC
+  SEC,
+  SEI,
+  CLI,
+  CLV
 } opCodeType;
 
 typedef enum {
@@ -142,7 +145,7 @@ static instrType instr[256] =
   {0x55, NOP, Impl},
   {0x56, NOP, Impl},
   {0x57, NOP, Impl},
-  {0x58, NOP, Impl},
+  {0x58, CLI, Impl},
   {0x59, NOP, Impl},
   {0x5a, NOP, Impl},
   {0x5b, NOP, Impl},
@@ -174,7 +177,7 @@ static instrType instr[256] =
   {0x75, ADC, ZPX},
   {0x76, NOP, Impl},
   {0x77, NOP, Impl},
-  {0x78, NOP, Impl},
+  {0x78, SEI, Impl},
   {0x79, ADC, AbsY},
   {0x7a, NOP, Impl},
   {0x7b, NOP, Impl},
@@ -238,7 +241,7 @@ static instrType instr[256] =
   {0xb5, LDA, ZPX},
   {0xb6, LDX, ZPY},
   {0xb7, NOP, Impl},
-  {0xb8, NOP, Impl},
+  {0xb8, CLV, Impl},
   {0xb9, LDA, AbsY},
   {0xba, NOP, Impl},
   {0xbb, NOP, Impl},
