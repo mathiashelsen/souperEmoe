@@ -2,6 +2,7 @@
 #define _CPU_6502_HPP
 
 #include <iostream>
+#include <cassert>
 
 #include "CPU.hpp"
 #include "ISA_6502.hpp"

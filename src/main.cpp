@@ -14,12 +14,12 @@
 #include "core/Computer.hpp"
 
 #include "unittests/lda_vfct.hpp"
+#include "unittests/adc_vfct.hpp"
 
 
 int main(int argc, char **argv)
 {
-  lda_runtest();
-  lda_runtest2();
+  adc_runtest();
 
   return EXIT_SUCCESS;
 }

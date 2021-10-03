@@ -29,6 +29,7 @@ int CPU_6502::runNextOperation()
   uint8_t   op2         = _memory->read(pc+2);
   uint16_t  address     = 0;
   uint8_t   operand     = 0;
+  uint16_t  result      = 0;
   int       retVal      = 2;
 
   instrType decodInstr  = instr[instruction];
@@ -126,8 +127,32 @@ int CPU_6502::runNextOperation()
         acc = reg_x;
         this->updateFlagsNZ(acc);
         break;
-      cae TYA:
+      case TYA:
         acc = reg_y;
+        this->updateFlagsNZ(acc);
+        break;
+      case DEX:
+        reg_x--;
+        this->updateFlagsNZ(reg_x);
+        break;
+      case DEY:
+        reg_y--;
+        this->updateFlagsNZ(reg_y);
+        break;
+      case INX:
+        reg_x++;
+        this->updateFlagsNZ(reg_x);
+        break;
+      case INY:
+        reg_y++;
+        this->updateFlagsNZ(reg_y);
+        break;
+      case ADC:
+        assert(status.D == 0);
+        result          = ((uint8_t) acc + operand) + status.C;
+        status.C        = (result & 0x100) >> 8;
+        status.V        = ((acc ^ result) & (operand ^ result) & 0x80) >> 7;
+        acc             = result & 0xff;
         this->updateFlagsNZ(acc);
         break;
       default:
