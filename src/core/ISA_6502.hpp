@@ -16,7 +16,9 @@ typedef enum {
   LDX,
   STX,
   LDY,
-  STY
+  STY,
+  DEC,
+  INC
 } opCodeType;
 
 typedef enum {
@@ -238,7 +240,7 @@ static instrType instr[256] =
   {0xc3, NOP, Impl},
   {0xc4, NOP, Impl},
   {0xc5, NOP, Impl},
-  {0xc6, NOP, Impl},
+  {0xc6, DEC, ZP},
   {0xc7, NOP, Impl},
   {0xc8, NOP, Impl},
   {0xc9, NOP, Impl},
@@ -246,7 +248,7 @@ static instrType instr[256] =
   {0xcb, NOP, Impl},
   {0xcc, NOP, Impl},
   {0xcd, NOP, Impl},
-  {0xce, NOP, Impl},
+  {0xce, DEC, Abs},
   {0xcf, NOP, Impl},
   {0xd0, NOP, Impl},
   {0xd1, NOP, Impl},
@@ -254,7 +256,7 @@ static instrType instr[256] =
   {0xd3, NOP, Impl},
   {0xd4, NOP, Impl},
   {0xd5, NOP, Impl},
-  {0xd6, NOP, Impl},
+  {0xd6, DEC, ZPX},
   {0xd7, NOP, Impl},
   {0xd8, NOP, Impl},
   {0xd9, NOP, Impl},
@@ -262,7 +264,7 @@ static instrType instr[256] =
   {0xdb, NOP, Impl},
   {0xdc, NOP, Impl},
   {0xdd, NOP, Impl},
-  {0xde, NOP, Impl},
+  {0xde, DEC, AbsX},
   {0xdf, NOP, Impl},
   {0xe0, NOP, Impl},
   {0xe1, NOP, Impl},
@@ -270,7 +272,7 @@ static instrType instr[256] =
   {0xe3, NOP, Impl},
   {0xe4, NOP, Impl},
   {0xe5, NOP, Impl},
-  {0xe6, NOP, Impl},
+  {0xe6, INC, ZP},
   {0xe7, NOP, Impl},
   {0xe8, NOP, Impl},
   {0xe9, NOP, Impl},
@@ -278,7 +280,7 @@ static instrType instr[256] =
   {0xeb, NOP, Impl},
   {0xec, NOP, Impl},
   {0xed, NOP, Impl},
-  {0xee, NOP, Impl},
+  {0xee, INC, Abs},
   {0xef, NOP, Impl},
   {0xf0, NOP, Impl},
   {0xf1, NOP, Impl},
@@ -286,7 +288,7 @@ static instrType instr[256] =
   {0xf3, NOP, Impl},
   {0xf4, NOP, Impl},
   {0xf5, NOP, Impl},
-  {0xf6, NOP, Impl},
+  {0xf6, INC, ZPX},
   {0xf7, NOP, Impl},
   {0xf8, NOP, Impl},
   {0xf9, NOP, Impl},
@@ -294,7 +296,7 @@ static instrType instr[256] =
   {0xfb, NOP, Impl},
   {0xfc, NOP, Impl},
   {0xfd, NOP, Impl},
-  {0xfe, NOP, Impl},
+  {0xfe, INC, AbsX},
   {0xff, NOP, Impl}
 };
 

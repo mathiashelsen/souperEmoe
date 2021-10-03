@@ -31,6 +31,32 @@ void lda_runtest2(void)
     printf("Acc = 0x%02X, expected 0x81\n", (uint8_t) computer->cpu->getAcc());
   }
 
+  computer->run(1);
+  if((uint8_t) computer->memory->read(0x3104) != 0x82)
+  {
+    errorCount++;
+    printf("Error in INC Abs, expected 0x82, got 0x%02X\n", (uint8_t) computer->memory->read(0x3104));
+  }
+  computer->run(2);
+  if((uint8_t) computer->memory->read(0x3104) != 0x83)
+  {
+    errorCount++;
+    printf("Error in INC AbsX, expected 0x83, got 0x%02X\n", (uint8_t) computer->memory->read(0x3104));
+  }
+  computer->run(1);
+  if((uint8_t) computer->memory->read(0x3104) != 0x82)
+  {
+    errorCount++;
+    printf("Error in DEC AbsX, expected 0x82, got 0x%02X\n", (uint8_t) computer->memory->read(0x3104));
+  }
+  computer->run(1);
+  if((uint8_t) computer->memory->read(0x3104) != 0x81)
+  {
+    errorCount++;
+    printf("Error in DEC Abs, expected 0x81, got 0x%02X\n", (uint8_t) computer->memory->read(0x3104));
+  }
+
+
   delete computer;
 
   if(errorCount == 0)

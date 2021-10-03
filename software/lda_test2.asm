@@ -17,3 +17,9 @@ lda #$31
 sta $3b
 ldx #$e9
 lda ($51,x)
+
+inc $3104
+ldx #$01
+inc $3103,x
+dec $3103,x
+dec $3104

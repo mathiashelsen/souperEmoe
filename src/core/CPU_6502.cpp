@@ -92,23 +92,27 @@ int CPU_6502::runNextOperation()
       case NOP:
         break;
       case LDA:
-        std::cout << "LDA" << std::endl;
         acc = operand;
         this->updateFlagsNZ(acc);
         break;
       case LDX:
-        std::cout << "LDX" << std::endl;
         reg_x = operand;
         this->updateFlagsNZ(reg_x);
         break;
       case LDY:
-        std::cout <<"LDY" << std::endl;
         reg_y = operand;
         this->updateFlagsNZ(reg_y);
         break;
       case STA:
-        std::cout << "STA" << std::endl;
         _memory->write(address, acc);
+        break;
+      case INC:
+        _memory->write(address, operand+1);
+        this->updateFlagsNZ(operand+1);
+        break;
+      case DEC:
+        _memory->write(address, operand-1);
+        this->updateFlagsNZ(operand-1);
         break;
       default:
         std::cout << "Unknown instruction" << std::endl;
