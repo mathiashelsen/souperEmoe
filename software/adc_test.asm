@@ -23,3 +23,10 @@ counter_loop:
   cpx #$0a
   bne counter_loop
   ldx #$ef
+
+  sec
+  lda #$40
+  rol
+  rol
+  ror
+  ror

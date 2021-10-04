@@ -305,7 +305,7 @@ int CPU_6502::runNextOperation()
         break;
       case LSR:
         status.C = acc & 1;
-        acc = acc >> 1;
+        acc = ((uint8_t) acc) >> 1;
         this->updateFlagsNZ(acc);
         break;
       case ROL:
@@ -316,7 +316,7 @@ int CPU_6502::runNextOperation()
         break;
       case ROR:
         temp = acc & 1;
-        acc = (acc >> 1) | (status.C << 7);
+        acc = (((uint8_t) acc) >> 1) | (status.C << 7);
         status.C = temp;
         this->updateFlagsNZ(acc);
         break;

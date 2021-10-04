@@ -81,6 +81,42 @@ void adc_runtest(void)
     printf("Error: regX value = 0x%02X, N=%d, Z=%d, V=%d, C=%d\n", (uint8_t) computer->cpu->getX(), stat.N, stat.Z, stat.V, stat.C);
 
   }
+
+  computer->run(3);
+  stat    = computer->cpu->getStatus();
+  accVal  = (uint8_t) computer->cpu->getAcc();
+  if(accVal != 0x81 || stat.C != 0)
+  {
+    errorCount++;
+    printf("Error: acc value = 0x%02X, N=%d, Z=%d, V=%d, C=%d\n", accVal, stat.N, stat.Z, stat.V, stat.C);
+  }
+  computer->run(1);
+
+  stat    = computer->cpu->getStatus();
+  accVal  = (uint8_t) computer->cpu->getAcc();
+  if(accVal != 0x02 || stat.C != 1)
+  {
+    errorCount++;
+    printf("Error: acc value = 0x%02X, N=%d, Z=%d, V=%d, C=%d\n", accVal, stat.N, stat.Z, stat.V, stat.C);
+  }
+
+  computer->run(1);
+  stat    = computer->cpu->getStatus();
+  accVal  = (uint8_t) computer->cpu->getAcc();
+  if(accVal != 0x81 || stat.C != 0)
+  {
+    errorCount++;
+    printf("Error: acc value = 0x%02X, N=%d, Z=%d, V=%d, C=%d\n", accVal, stat.N, stat.Z, stat.V, stat.C);
+  }
+  computer->run(1);
+  stat    = computer->cpu->getStatus();
+  accVal  = (uint8_t) computer->cpu->getAcc();
+  if(accVal != 0x40 || stat.C != 1)
+  {
+    errorCount++;
+    printf("Error: acc value = 0x%02X, N=%d, Z=%d, V=%d, C=%d\n", accVal, stat.N, stat.Z, stat.V, stat.C);
+  }
+
   
 
   delete computer;
