@@ -65,6 +65,22 @@ void adc_runtest(void)
     errorCount++;
     printf("Error: acc value = 0x%02X, N=%d, Z=%d, V=%d, C=%d\n", accVal, stat.N, stat.Z, stat.V, stat.C);
   }
+
+  computer->run(31); // Count up to 10 in regX 
+  if((uint8_t) computer->cpu->getX() != 0x0A)
+  {
+    errorCount++;
+    printf("Error: regX value = 0x%02X, N=%d, Z=%d, V=%d, C=%d\n", (uint8_t) computer->cpu->getX(), stat.N, stat.Z, stat.V, stat.C);
+
+  }
+
+  computer->run(1); // Do not branch and set to 0xEF
+  if((uint8_t) computer->cpu->getX() != 0xEF)
+  {
+    errorCount++;
+    printf("Error: regX value = 0x%02X, N=%d, Z=%d, V=%d, C=%d\n", (uint8_t) computer->cpu->getX(), stat.N, stat.Z, stat.V, stat.C);
+
+  }
   
 
   delete computer;

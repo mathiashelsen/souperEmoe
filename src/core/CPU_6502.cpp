@@ -34,9 +34,9 @@ int CPU_6502::runNextOperation()
 
   instrType decodInstr  = instr[instruction];
 
+  printf("PC = %04X\n", (uint16_t) pc);
   pc++;
 
-  printf("PC = %04X\n", (uint16_t) pc);
 
   switch(decodInstr._addrMode)
   {
@@ -90,8 +90,6 @@ int CPU_6502::runNextOperation()
 
   switch(decodInstr._opCode)
   {
-      case NOP:
-        break;
       case LDA:
         acc = operand;
         this->updateFlagsNZ(acc);
@@ -235,6 +233,18 @@ int CPU_6502::runNextOperation()
         status.N = (operand >> 6) & 0x01;
         status.V = (operand >> 5) & 0x01;
         status.Z = (operand & acc) == 0 ? 1 : 0;
+        break;
+      case BNE:
+        if(status.Z == 0)
+        {
+          pc += (char) operand;
+        }
+        break;
+      case BEQ:
+        if(status.Z == 1)
+        {
+          pc += (char) operand;
+        }
         break;
       default:
         std::cout << "Unknown instruction" << std::endl;

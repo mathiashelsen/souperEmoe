@@ -44,9 +44,18 @@ Memory::Memory(int nBytes, const char* objectCodeFilename)
     ram[i+DEFAULT_SCREEN_RAM_BASE_ADDR] = 32; //Empty char
   }
 
-  fileStream.open(objectCodeFilename, std::ifstream::in);
-  fileStream.get((char *)(ram+0xc000), 1024);
-  fileStream.close();
+  //std::ifstream codeStream(objectCodeFilename, std::ios::binary);
+  //codeStream.get((char *)(ram+0xc000), 2048);
+  //std::cout << "Total bytes read: " << codeStream.gcount() << std::endl;
+  //codeStream.close();
+
+  FILE * fs = fopen(objectCodeFilename, "rb");
+  fseek(fs, 0, SEEK_END);
+  int fSize = ftell(fs);
+  rewind(fs);
+  std::cout << "C says there are " << fSize << " byte to be read" << std::endl;
+  fread(ram+0xC000, fSize, 1, fs);
+  fclose(fs);
 
   // Set the PC at RST to 0xC000
   ram[RST_VECTOR]   = 0x00;
@@ -62,9 +71,13 @@ uint8_t Memory::read(int addr)
 {
   printf("Reading value 0x%02X from 0x%04X\n", (uint8_t) ram[addr], (uint16_t) addr);
   if(addr < ramSize)
+  {
     return ram[addr];
+  }
   else
+  {
     return (uint8_t) 0;
+  }
 }
 
 void Memory::write(int addr, uint8_t data)
