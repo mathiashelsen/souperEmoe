@@ -246,6 +246,42 @@ int CPU_6502::runNextOperation()
           pc += (char) operand;
         }
         break;
+      case BPL:
+        if(status.N == 0)
+        {
+          pc += (char) operand;
+        }
+        break;
+      case BMI:
+        if(status.N == 1)
+        {
+          pc += (char) operand;
+        }
+        break;
+      case BVC:
+        if(status.V == 0)
+        {
+          pc += (char) operand;
+        }
+        break;
+      case BVS:
+        if(status.V == 1)
+        {
+          pc += (char) operand;
+        }
+        break;
+      case BCC:
+        if(status.C == 0)
+        {
+          pc += (char) operand;
+        }
+        break;
+      case BCS:
+        if(status.C == 1)
+        {
+          pc += (char) operand;
+        }
+        break;
       default:
         std::cout << "Unknown instruction" << std::endl;
         break;
