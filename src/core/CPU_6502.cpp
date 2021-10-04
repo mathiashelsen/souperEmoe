@@ -216,6 +216,26 @@ int CPU_6502::runNextOperation()
       case SEI:
         status.I = 1;
         break;
+      case CMP:
+        status.C = ((uint8_t) acc) >  operand ? 1 : 0;
+        status.Z = ((uint8_t) acc) == operand ? 1 : 0;
+        status.N = ((uint8_t) acc) <  operand ? 1 : 0;
+        break;
+      case CPX:
+        status.C = ((uint8_t) reg_x) >  operand ? 1 : 0;
+        status.Z = ((uint8_t) reg_x) == operand ? 1 : 0;
+        status.N = ((uint8_t) reg_x) <  operand ? 1 : 0;
+        break;
+      case CPY:
+        status.C = ((uint8_t) reg_y) >  operand ? 1 : 0;
+        status.Z = ((uint8_t) reg_y) == operand ? 1 : 0;
+        status.N = ((uint8_t) reg_y) <  operand ? 1 : 0;
+        break;
+      case BIT:
+        status.N = (operand >> 6) & 0x01;
+        status.V = (operand >> 5) & 0x01;
+        status.Z = (operand & acc) == 0 ? 1 : 0;
+        break;
       default:
         std::cout << "Unknown instruction" << std::endl;
         break;
