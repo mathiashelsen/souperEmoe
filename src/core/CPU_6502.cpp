@@ -171,6 +171,30 @@ int CPU_6502::runNextOperation()
           acc             = result & 0xff;
         }
         break;
+      case SBC:
+        if(status.D == 0)
+        {
+          result          = ((uint8_t) acc + (~operand)) + status.C;
+          status.C        = (result & 0x100) >> 8;
+          status.V        = ((acc ^ result) & ((~operand) ^ result) & 0x80) >> 7;
+          acc             = result & 0xff;
+          this->updateFlagsNZ(acc);
+        }else{
+          // Its NMOS 6502 mode, to NV(Z) are invalid
+          result          = ((uint8_t) acc + (~operand)) + status.C;
+          status.V        = ((acc ^ result) & ((~operand) ^ result) & 0x80) >> 7;
+          this->updateFlagsNZ(acc);
+
+          // Correct the output
+          if( (result & 0x0f) > 0x09 )
+            result += 0x06;
+          if( (result & 0xf0) > 0x90) // 9 << 4
+            result += 0x60;
+
+          status.C        = result > 0x99 ? 1 : 0;
+          acc             = result & 0xff;
+        }
+        break;
       case CLD:
         status.D = 0;
         break;
