@@ -75,12 +75,12 @@ int CPU_6502::runNextOperation()
       pc      += 1;
       break;
     case AbsY: // Abs, y -- Good
-      address = (op1 | (op2 << 8)) + reg_y;
+      address = (op1 | (op2 << 8)) + (uint8_t) reg_y;
       operand = _memory->read(address);
       pc      += 2;
       break;
     case AbsX: // Abs, x -- Good
-      address = (op1 | (op2 << 8)) + reg_x;
+      address = (op1 | (op2 << 8)) + (uint8_t) reg_x;
       operand = _memory->read(address);
       pc      += 2;
       break;
