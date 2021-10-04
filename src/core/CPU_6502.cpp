@@ -31,6 +31,7 @@ int CPU_6502::runNextOperation()
   uint8_t   operand     = 0;
   uint16_t  result      = 0;
   int       retVal      = 2;
+  uint8_t   temp        = 0;
 
   instrType decodInstr  = instr[instruction];
 
@@ -83,6 +84,9 @@ int CPU_6502::runNextOperation()
       address = (op1 | (op2 << 8)) + (uint8_t) reg_x;
       operand = _memory->read(address);
       pc      += 2;
+      break;
+    case Acc:
+      operand = (uint8_t) acc;
       break;
     case Impl:
       break;
@@ -281,6 +285,40 @@ int CPU_6502::runNextOperation()
         {
           pc += (char) operand;
         }
+        break;
+      case AND:
+        acc = acc & operand;
+        this->updateFlagsNZ(acc);
+        break;
+      case EOR:
+        acc = acc ^ operand;
+        this->updateFlagsNZ(acc);
+        break;
+      case ORA:
+        acc = acc | operand;
+        this->updateFlagsNZ(acc);
+        break;
+      case ASL:
+        status.C = (acc >> 7);
+        acc = acc << 1;
+        this->updateFlagsNZ(acc);
+        break;
+      case LSR:
+        status.C = acc & 1;
+        acc = acc >> 1;
+        this->updateFlagsNZ(acc);
+        break;
+      case ROL:
+        temp = (acc >> 7);
+        acc = (acc << 1) | status.C;
+        status.C = temp;
+        this->updateFlagsNZ(acc);
+        break;
+      case ROR:
+        temp = acc & 1;
+        acc = (acc >> 1) | (status.C << 7);
+        status.C = temp;
+        this->updateFlagsNZ(acc);
         break;
       default:
         std::cout << "Unknown instruction" << std::endl;
