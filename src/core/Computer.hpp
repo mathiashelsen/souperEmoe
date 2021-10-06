@@ -32,6 +32,7 @@ class Computer
     Computer(fifo<unsigned char*>* videoStream, int OSR, const char* objectCodeFilename);
     void run();
     void run(int nInstructions);
+    void run(int nInstructions, int IRQ);
 };
 
 #endif

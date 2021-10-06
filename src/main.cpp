@@ -15,11 +15,14 @@
 
 #include "unittests/lda_vfct.hpp"
 #include "unittests/adc_vfct.hpp"
+#include "unittests/int_vfct.hpp"
 
 
 int main(int argc, char **argv)
 {
   adc_runtest();
+  lda_runtest();
+  int_runtest();
 
   return EXIT_SUCCESS;
 }

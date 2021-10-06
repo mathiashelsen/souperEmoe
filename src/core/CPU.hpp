@@ -12,6 +12,7 @@ class CPU
     CPU(Memory* memory);
     virtual void reset(void);
     virtual int runNextOperation(void);
+    virtual int runNextOperation(int, int);
 };
 
 #endif

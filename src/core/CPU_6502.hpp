@@ -36,7 +36,8 @@ class CPU_6502 : public CPU
   public:
     CPU_6502(Memory* memory);
     void        reset(void);
-    int         runNextOperation(void);
+    int         runNextOperation(int IRQ, int NMI);
+    int         runNextOperation() { return this->runNextOperation(0, 0); };
     char        getAcc(void)    { return acc; };
     char        getX(void)      { return reg_x; };
     char        getY(void)      { return reg_y; };

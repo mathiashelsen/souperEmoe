@@ -157,8 +157,8 @@ void adc_runtest(void)
   delete computer;
 
   if(errorCount == 0)
-    printf("LDA Unit Test: PERFECT SCORE\n");
+    printf("ADC Unit Test: PERFECT SCORE\n");
   else
-    printf("LDA Unit Test: Total number of errors found: %d\n", errorCount);
+    printf("ADC Unit Test: Total number of errors found: %d\n", errorCount);
 
 }

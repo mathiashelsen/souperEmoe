@@ -24,6 +24,8 @@ Memory::Memory(int nBytes)
   // Set the PC at RST to 0xC000
   ram[RST_VECTOR]   = 0x00;
   ram[RST_VECTOR+1] = 0xC0;
+  ram[IRQ_VECTOR]   = 0x00;
+  ram[IRQ_VECTOR+1] = 0xCF;
 
 }
 
@@ -60,6 +62,8 @@ Memory::Memory(int nBytes, const char* objectCodeFilename)
   // Set the PC at RST to 0xC000
   ram[RST_VECTOR]   = 0x00;
   ram[RST_VECTOR+1] = 0xC0;
+  ram[IRQ_VECTOR]   = 0x00;
+  ram[IRQ_VECTOR+1] = 0xCF;
 }
 
 Memory::~Memory()
@@ -69,8 +73,8 @@ Memory::~Memory()
 
 uint8_t Memory::read(int addr)
 {
-  printf("Reading value 0x%02X from 0x%04X\n", (uint8_t) ram[addr], (uint16_t) addr);
-  if(addr < ramSize)
+  //printf("Reading value 0x%02X from 0x%04X\n", (uint8_t) ram[addr], (uint16_t) addr);
+  if(addr <= ramSize)
   {
     return ram[addr];
   }
@@ -82,7 +86,7 @@ uint8_t Memory::read(int addr)
 
 void Memory::write(int addr, uint8_t data)
 {
-  printf("Writing value 0x%02X to address %04X\n", (uint8_t) data, (uint16_t) addr);
+  //printf("Writing value 0x%02X to address %04X\n", (uint8_t) data, (uint16_t) addr);
   if(addr < ramSize)
     ram[addr] = data;
 }
