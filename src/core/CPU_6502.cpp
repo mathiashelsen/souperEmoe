@@ -88,6 +88,11 @@ int CPU_6502::runNextOperation()
     case Acc:
       operand = (uint8_t) acc;
       break;
+    case Ind:
+      address = op1 | (op2 << 8);
+      address = _memory->read(address) | (_memory->read(address+1) << 8);
+      pc     += 2;
+      break;
     case Impl:
       break;
   }
@@ -319,6 +324,22 @@ int CPU_6502::runNextOperation()
         acc = (((uint8_t) acc) >> 1) | (status.C << 7);
         status.C = temp;
         this->updateFlagsNZ(acc);
+        break;
+      case JMP:
+        pc = address;
+        break;
+      case JSR:
+        _memory->write(sp, pc & 0xff);
+        sp++;
+        _memory->write(sp, (pc >> 8) & 0xff);
+        sp++;
+        pc = address;
+        break;
+      case RTS:
+        sp--;
+        pc = _memory->read(sp) << 8;
+        sp--;
+        pc = pc | _memory->read(sp-1);
         break;
       default:
         std::cout << "Unknown instruction" << std::endl;

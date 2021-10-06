@@ -48,7 +48,10 @@ typedef enum {
   ROR,
   ROL,
   ASL,
-  LSR
+  LSR,
+  JMP,
+  JSR,
+  RTS
 } opCodeType;
 
 typedef enum {
@@ -62,7 +65,8 @@ typedef enum {
   AbsY,
   AbsX,
   Impl,
-  Acc
+  Acc,
+  Ind
 } addrModeType;
 
 typedef struct {
@@ -105,7 +109,7 @@ static instrType instr[256] =
   {0x1d, ORA, AbsX},
   {0x1e, ASL, AbsX},
   {0x1f, NOP, Impl},
-  {0x20, NOP, Impl},
+  {0x20, JSR, Abs},
   {0x21, AND, _ZPX_},
   {0x22, NOP, Impl},
   {0x23, NOP, Impl},
@@ -149,7 +153,7 @@ static instrType instr[256] =
   {0x49, EOR, Imm},
   {0x4a, LSR, Acc},
   {0x4b, NOP, Impl},
-  {0x4c, NOP, Impl},
+  {0x4c, JMP, Abs},
   {0x4d, EOR, Abs},
   {0x4e, LSR, Abs},
   {0x4f, NOP, Impl},
@@ -169,7 +173,7 @@ static instrType instr[256] =
   {0x5d, EOR, AbsX},
   {0x5e, LSR, AbsX},
   {0x5f, NOP, Impl},
-  {0x60, NOP, Impl},
+  {0x60, RTS, Impl},
   {0x61, ADC, _ZPX_},
   {0x62, NOP, Impl},
   {0x63, NOP, Impl},
@@ -181,7 +185,7 @@ static instrType instr[256] =
   {0x69, ADC, Imm},
   {0x6a, ROR, Acc},
   {0x6b, NOP, Impl},
-  {0x6c, NOP, Impl},
+  {0x6c, JMP, Ind},
   {0x6d, ADC, Abs},
   {0x6e, ROR, Abs},
   {0x6f, NOP, Impl},
