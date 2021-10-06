@@ -51,7 +51,15 @@ typedef enum {
   LSR,
   JMP,
   JSR,
-  RTS
+  RTS,
+  RTI,
+  PHA,
+  PHP,
+  TXS,
+  PLA,
+  PLP,
+  TSX,
+  BRK
 } opCodeType;
 
 typedef enum {
@@ -77,7 +85,7 @@ typedef struct {
 
 static instrType instr[256] =
 {
-  {0x00, NOP, Impl},
+  {0x00, BRK, Impl},
   {0x01, ORA, _ZPX_},
   {0x02, NOP, Impl},
   {0x03, NOP, Impl},
@@ -85,7 +93,7 @@ static instrType instr[256] =
   {0x05, ORA, ZP},
   {0x06, ASL, ZP},
   {0x07, NOP, Impl},
-  {0x08, NOP, Impl},
+  {0x08, PHP, Impl},
   {0x09, ORA, Imm},
   {0x0a, ASL, Acc},
   {0x0b, NOP, Impl},
@@ -117,7 +125,7 @@ static instrType instr[256] =
   {0x25, AND, ZP},
   {0x26, ROL, ZP},
   {0x27, NOP, Impl},
-  {0x28, NOP, Impl},
+  {0x28, PLP, Impl},
   {0x29, AND, Imm},
   {0x2a, ROL, Acc},
   {0x2b, NOP, Impl},
@@ -141,7 +149,7 @@ static instrType instr[256] =
   {0x3d, AND, AbsX},
   {0x3e, ROL, AbsX},
   {0x3f, NOP, Impl},
-  {0x40, NOP, Impl},
+  {0x40, RTI, Impl},
   {0x41, EOR, _ZPX_},
   {0x42, NOP, Impl},
   {0x43, NOP, Impl},
@@ -149,7 +157,7 @@ static instrType instr[256] =
   {0x45, EOR, ZP},
   {0x46, LSR, ZP},
   {0x47, NOP, Impl},
-  {0x48, NOP, Impl},
+  {0x48, PHA, Impl},
   {0x49, EOR, Imm},
   {0x4a, LSR, Acc},
   {0x4b, NOP, Impl},
@@ -181,7 +189,7 @@ static instrType instr[256] =
   {0x65, ADC, ZP},
   {0x66, ROR, ZP},
   {0x67, NOP, Impl},
-  {0x68, NOP, Impl},
+  {0x68, PLA, Impl},
   {0x69, ADC, Imm},
   {0x6a, ROR, Acc},
   {0x6b, NOP, Impl},
@@ -231,7 +239,7 @@ static instrType instr[256] =
   {0x97, NOP, Impl},
   {0x98, TYA, Impl},
   {0x99, STA, AbsY},
-  {0x9a, NOP, Impl},
+  {0x9a, TXS, Impl},
   {0x9b, NOP, Impl},
   {0x9c, NOP, Impl},
   {0x9d, STA, AbsX},
@@ -263,7 +271,7 @@ static instrType instr[256] =
   {0xb7, NOP, Impl},
   {0xb8, CLV, Impl},
   {0xb9, LDA, AbsY},
-  {0xba, NOP, Impl},
+  {0xba, TSX, Impl},
   {0xbb, NOP, Impl},
   {0xbc, LDY, AbsX},
   {0xbd, LDA, AbsX},

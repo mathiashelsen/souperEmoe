@@ -43,3 +43,11 @@ final_run:
   jsr inc_by_3
   txa
 
+  clc
+  pha
+  adc #$10
+  pha
+  tsx
+  inx
+  txs
+  pla

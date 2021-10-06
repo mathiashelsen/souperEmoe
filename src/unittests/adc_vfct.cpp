@@ -138,6 +138,20 @@ void adc_runtest(void)
     errorCount++;
     printf("Error acc value = 0x%02X\n", computer->cpu->getAcc());
   }
+
+  computer->run(7);
+  if(computer->cpu->getAcc() != 0x13)
+  {
+    errorCount++;
+    printf("Error acc value = 0x%02X\n", computer->cpu->getAcc());
+  }
+
+  computer->run(1);
+  if(computer->cpu->getAcc() != 0x03)
+  {
+    errorCount++;
+    printf("Error acc value = 0x%02X\n", computer->cpu->getAcc());
+  }
   
 
   delete computer;

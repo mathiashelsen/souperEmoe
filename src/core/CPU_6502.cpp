@@ -332,17 +332,52 @@ int CPU_6502::runNextOperation()
         pc = address;
         break;
       case JSR:
-        _memory->write(sp, pc & 0xff);
+        _memory->write((0x100 | sp), pc & 0xff);
         sp--;
-        _memory->write(sp, (pc >> 8) & 0xff);
+        _memory->write((0x100 | sp), (pc >> 8) & 0xff);
         sp--;
         pc = address;
         break;
       case RTS:
         sp++;
-        pc = _memory->read(sp) << 8;
+        pc = _memory->read((0x100 | sp)) << 8;
         sp++;
-        pc = pc | _memory->read(sp);
+        pc = pc | _memory->read((0x100 | sp));
+        break;
+      case RTI:
+        sp++;
+        this->setStatusFlags(_memory->read((0x100 | sp)));
+        sp++;
+        pc = _memory->read((0x100 | sp)) << 8;
+        sp++;
+        pc = pc | _memory->read((0x100 | sp));
+        break;
+      case PHA:
+        _memory->write(0x100 | sp, acc);
+        sp--;
+        break;
+      case PHP:
+        _memory->write(0x100 | sp, this->getStatusFlags());
+        sp--;
+        break;
+      case TXS:
+        sp = (uint8_t) reg_x;
+        break;
+      case PLA:
+        sp++;
+        acc = _memory->read(0x100 | sp);
+        this->updateFlagsNZ(acc);
+        break;
+      case PLP:
+        sp++;
+        this->setStatusFlags(_memory->read(0x100 | sp));
+        break;
+      case TSX:
+        reg_x = (char) sp;
+        this->updateFlagsNZ(reg_x);
+        break;
+      case BRK:
+        status.B = 1;
         break;
       default:
         std::cout << "Unknown instruction" << std::endl;
@@ -364,4 +399,38 @@ void CPU_6502::updateFlagsNZ(char regVal)
     status.Z = 1;
   else
     status.Z = 0;
+}
+    
+void CPU_6502::setStatusFlags(uint8_t val)
+{
+  uint8_t tmp = val;
+
+  status.C = tmp & 1;
+  tmp = tmp >> 1;
+  status.Z = tmp & 1;
+  tmp = tmp >> 1;
+  status.I = tmp & 1;
+  tmp = tmp >> 1;
+  status.D = tmp & 1;
+  tmp = tmp >> 1;
+  status.B = tmp & 1;
+  tmp = tmp >> 2;
+  status.V = tmp & 1;
+  tmp = tmp >> 1;
+  status.N = tmp & 1;
+}
+
+uint8_t CPU_6502::getStatusFlags()
+{
+  uint8_t retVal = 0;
+
+  retVal |=  status.C;
+  retVal |= (status.Z << 1);
+  retVal |= (status.I << 2);
+  retVal |= (status.D << 3);
+  retVal |= (status.B << 4);
+  retVal |= (status.V << 6);
+  retVal |= (status.N << 7);
+
+  return retVal;
 }

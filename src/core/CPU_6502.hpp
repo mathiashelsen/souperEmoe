@@ -26,21 +26,23 @@ class CPU_6502 : public CPU
     char        reg_x;
     char        reg_y;
     int         pc;
-    int         sp;
+    uint8_t     sp;
     statusType  status;
 
-    void updateFlagsNZ(char regVal);
+    void        setStatusFlags(uint8_t val);
+    uint8_t     getStatusFlags();
+    void        updateFlagsNZ(char regVal);
 
   public:
     CPU_6502(Memory* memory);
-    void reset(void);
-    int runNextOperation(void);
-    char  getAcc(void)  { return acc; };
-    char  getX(void)    { return reg_x; };
-    char  getY(void)    { return reg_y; };
-    int   getPC(void)   { return pc; };
-    int   getSP(void)   { return sp; };
-    statusType getStatus(void) { return status; };
+    void        reset(void);
+    int         runNextOperation(void);
+    char        getAcc(void)    { return acc; };
+    char        getX(void)      { return reg_x; };
+    char        getY(void)      { return reg_y; };
+    int         getPC(void)     { return pc; };
+    int         getSP(void)     { return sp; };
+    statusType  getStatus(void) { return status; };
 
 };
 
