@@ -90,6 +90,9 @@ int CPU_6502::runNextOperation()
       break;
     case Ind:
       address = op1 | (op2 << 8);
+      // TODO: The line below is not correct, but I am lazy. If address = 0x03FF
+      // it should compose the new address out of (0x03FF) | (0x0300), i.e.
+      // it should overflow.
       address = _memory->read(address) | (_memory->read(address+1) << 8);
       pc     += 2;
       break;
@@ -330,16 +333,16 @@ int CPU_6502::runNextOperation()
         break;
       case JSR:
         _memory->write(sp, pc & 0xff);
-        sp++;
+        sp--;
         _memory->write(sp, (pc >> 8) & 0xff);
-        sp++;
+        sp--;
         pc = address;
         break;
       case RTS:
-        sp--;
+        sp++;
         pc = _memory->read(sp) << 8;
-        sp--;
-        pc = pc | _memory->read(sp-1);
+        sp++;
+        pc = pc | _memory->read(sp);
         break;
       default:
         std::cout << "Unknown instruction" << std::endl;

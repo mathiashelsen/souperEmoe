@@ -117,6 +117,27 @@ void adc_runtest(void)
     printf("Error: acc value = 0x%02X, N=%d, Z=%d, V=%d, C=%d\n", accVal, stat.N, stat.Z, stat.V, stat.C);
   }
 
+  computer->run(2);
+  if(computer->cpu->getX() != 0x00)
+  {
+    errorCount++;
+    printf("Error, reg_x value = 0x%02X\n", computer->cpu->getX());
+
+  }
+
+  computer->run(4);
+  if(computer->cpu->getX() != 0x03)
+  {
+    errorCount++;
+    printf("Error, reg_x value = 0x%02X\n", computer->cpu->getX());
+  }
+
+  computer->run(2);
+  if(computer->cpu->getAcc() != 0x03)
+  {
+    errorCount++;
+    printf("Error acc value = 0x%02X\n", computer->cpu->getAcc());
+  }
   
 
   delete computer;

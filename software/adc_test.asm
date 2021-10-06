@@ -30,3 +30,16 @@ counter_loop:
   rol
   ror
   ror
+
+  jmp final_run
+inc_by_3:
+  inx
+  inx
+  inx
+  rts
+
+final_run:
+  ldx #$0
+  jsr inc_by_3
+  txa
+
