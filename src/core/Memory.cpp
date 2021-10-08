@@ -89,4 +89,16 @@ void Memory::write(int addr, uint8_t data)
   //printf("Writing value 0x%02X to address %04X\n", (uint8_t) data, (uint16_t) addr);
   if(addr < ramSize)
     ram[addr] = data;
+
+  //switch(addr)
+  //{
+  //  case 0x50: printf("Updating pos_x to %d\n", data);
+  //            break;
+  //  case 0x51: printf("Updating dir_x to %d\n", data);
+  //            break;
+  //  case 0x52: printf("Updating pos_y to %d\n", data);
+  //            break;
+  //  case 0x53: printf("Updating dir_y to %d\n", data);
+  //            break;
+  //}
 }

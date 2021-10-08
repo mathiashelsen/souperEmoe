@@ -139,6 +139,10 @@ int CPU_6502::runNextOperation(int IRQ, int NMI)
           break;
         case STA:
           _memory->write(address, acc);
+          //if(decodInstr._addrMode == _ZP_Y)
+          //{
+          //  printf("Addressing _ZP_Y to: 0x%04X, writing 0x%02X\n", address, acc);
+          //}
           break;
         case INC:
           _memory->write(address, operand+1);

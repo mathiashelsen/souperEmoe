@@ -17,12 +17,58 @@
 #include "unittests/adc_vfct.hpp"
 #include "unittests/int_vfct.hpp"
 
+#include <algorithm>
+
+char* getCmdOption(char ** begin, char ** end, const std::string & option)
+{
+    char ** itr = std::find(begin, end, option);
+    if (itr != end && ++itr != end)
+    {
+        return *itr;
+    }
+    return 0;
+}
+
+bool cmdOptionExists(char** begin, char** end, const std::string& option)
+{
+    return std::find(begin, end, option) != end;
+}
 
 int main(int argc, char **argv)
 {
-  adc_runtest();
-  lda_runtest();
-  int_runtest();
+  int   OSR = 3;
+  char* fileName;
+
+  if(cmdOptionExists(argv, argv+argc, "--test"))
+  {
+    adc_runtest();
+    lda_runtest();
+    int_runtest();
+
+    return EXIT_SUCCESS;
+  }
+
+  if(cmdOptionExists(argv, argv+argc, "--file"))
+  {
+    fileName = getCmdOption(argv, argv+argc, "--file");
+  }
+  else
+  {
+    printf("Error: if not running a test, a file is required. Specify with --file [fileName]\n");
+    return EXIT_SUCCESS;
+  }
+
+  if(cmdOptionExists(argv, argv+argc, "--OSR"))
+  {
+    OSR = getCmdOption(argv, argv+argc, "--OSR");
+  }
+
+  fifo<unsigned char *> videoStream;
+  render_X11 videoOutput = render_X11( &videoStream, OSR);
+  std::thread videoThread( &render_X11::run, &videoOutput );
+
+  Computer *computer = new Computer(&videoStream, OSR, fileName);
+  computer->run();
 
   return EXIT_SUCCESS;
 }
