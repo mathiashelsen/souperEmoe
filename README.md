@@ -28,11 +28,10 @@ The emulation will be operation accurate, but not cycle accurate. I don't think 
  
 # What's working?
 * Basic graphics output via X11: a character ROM is loaded to the correct location and you can run "hello world".
-* There is some memory and a few instructions available, you can run "helloWorld.asm"
-![alt text](https://github.com/mathiashelsen/souperEmoe/blob/main/software/screenshotHelloWorld.png?raw=true)
+* The CPU is up and running. Instructions have been mostly verified using unittests (no, I don't have coverage results).
+* You can run bouncingBall, a small demo using way too many jumps, bouncing a ball across the screen
 
 # What's TODO?
-* Efficiently implement the full instruction set and write unit tests. A great starting point/reference is: https://llx.com/Neil/a2/opcodes.html and also http://www.c64os.com/post/6502instructions
 * Memory map: make sure everything is where it should be, add paging, ...
 * Memory map: implement that registers of the VICII are correctly updated from memory writes
 * VIC-II: really implement to required display modes, update to the correct colors (the current ones are looking bad).
