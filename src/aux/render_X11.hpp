@@ -20,6 +20,7 @@ class render_X11
     Display*              display;
     Visual*               visual;
     Window                window;
+    XEvent                event;
     fifo<unsigned char*>* _videoStream;
     bool                  _enableStream;
     int                   _OSR;

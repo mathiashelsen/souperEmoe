@@ -22,6 +22,9 @@ void render_X11::run(void)
   XMapWindow(display, window);
   XFlush(display);
 
+  /* select kind of events we are interested in */
+  XSelectInput(display, window, KeyPressMask | KeyReleaseMask );
+
   _enableStream = true;
   prevFrame = std::chrono::high_resolution_clock::now();
 
@@ -43,8 +46,26 @@ void render_X11::run(void)
       XPutImage(display, window, DefaultGC(display, 0), ximage, 0, 0, 0, 0, _OSR*SCREEN_XSIZE, _OSR*SCREEN_YSIZE);
       XFlush(display);
 
-      if(prevFrameTime < FRAMETIME)
-        usleep(FRAMETIME - prevFrameTime); // Actually should correct for time used for rendering the image
+    }
+
+    if(XPending(display))
+    {
+      printf("There is an event...\n");
+      XNextEvent(display, &event);
+      
+      /* keyboard events */
+      if (event.type == KeyPress)
+      {
+          printf( "KeyPress: %x\n", event.xkey.keycode );
+      
+          /* exit on ESC key press */
+          if ( event.xkey.keycode == 0x09 )
+              _enableStream = false;
+      }
+      else if (event.type == KeyRelease)
+      {
+          printf( "KeyRelease: %x\n", event.xkey.keycode );
+      }
     }
   }
 
