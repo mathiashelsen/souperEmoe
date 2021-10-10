@@ -104,7 +104,6 @@ uint8_t Memory::read(int addr)
     ram[0xC6] = (uint8_t) nKeysPressed;
     if(nKeysPressed)
     {
-      printf("A number of keys were pressed: %02d\n", nKeysPressed);
       for(int i = 0; i < nKeysPressed && i < 10; i++)
       {
         ram[0x277 + (uint8_t)i] = (uint8_t) keysPressed[i];

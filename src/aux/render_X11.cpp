@@ -58,7 +58,6 @@ void render_X11::run(void)
 
     while(XPending(display))
     {
-      printf("There is an event...\n");
       XNextEvent(display, &event);
      
       if(_keyStream)
@@ -66,7 +65,6 @@ void render_X11::run(void)
         /* keyboard events */
         if (event.type == KeyPress)
         {
-            printf( "KeyPress: %x\n", event.xkey.keycode );
             _keyStream->setKey( event.xkey.keycode );
         
             /* exit on ESC key press */
@@ -75,7 +73,6 @@ void render_X11::run(void)
         }
         else if (event.type == KeyRelease)
         {
-            printf( "KeyRelease: %x\n", event.xkey.keycode );
             _keyStream->clearKey( event.xkey.keycode );
         }
       }
