@@ -1,19 +1,19 @@
 #include "Computer.hpp"
 
-Computer::Computer(fifo<unsigned char*>* videoStream, int OSR)
+Computer::Computer(fifo<unsigned char*>* videoStream, int OSR, keystream* keyStream)
 {
-  memory  = new Memory(0xffff);
-  cpu     = new CPU_6502(memory);
-  video   = new VICII(videoStream, memory, OSR);
-  //video   = new BouncingBallVideo(videoStream, memory);
-  //video   = new Video(videoStream, memory);
+  memory      = new Memory(0xffff);
+  cpu         = new CPU_6502(memory);
+  video       = new VICII(videoStream, memory, OSR);
+  _keyStream  = keyStream;
 }
 
-Computer::Computer(fifo<unsigned char*>* videoStream, int OSR, const char* objectCodeFilename)
+Computer::Computer(fifo<unsigned char*>* videoStream, int OSR, keystream* keyStream, const char* objectCodeFilename)
 {
-  memory  = new Memory(0xffff, objectCodeFilename);
-  cpu     = new CPU_6502(memory);
-  video   = new VICII(videoStream, memory, OSR);
+  memory      = new Memory(0xffff, objectCodeFilename);
+  cpu         = new CPU_6502(memory);
+  video       = new VICII(videoStream, memory, OSR);
+  _keyStream  = keyStream;
 
 }
 
@@ -37,6 +37,27 @@ void Computer::run(void)
       cpuCycles   =   cpu->runNextOperation();
       totalCycles +=  cpuCycles;
       totalCycles +=  video->runNextOperation(cpuCycles);
+
+      if(_keyStream)
+      {
+        char* keysPressed;
+        int   nKeysPressed;
+        keysPressed = _keyStream->getAllPressed(nKeysPressed);
+        if(nKeysPressed)
+        {
+          printf("The following keys were pressed: ");
+          for(int i = 0; i < nKeysPressed; i++)
+          {
+            printf("0x%02X, ", keysPressed[i]);
+            if(keysPressed[i] == 0x09)
+            {
+              reset = true;
+            }
+          }
+          printf("\n");
+          delete keysPressed;
+        }
+      }
     }
 
     // Stop the chronometer when enough clock cycles have passed

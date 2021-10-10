@@ -9,7 +9,7 @@ void adc_runtest(void)
 
   fifo<unsigned char *> videoStream;
 
-  Computer *computer = new Computer(&videoStream, OSR, "software/adc_test.o");
+  Computer *computer = new Computer(&videoStream, OSR, NULL, "software/adc_test.o");
 
   computer->run(2);
   stat    = computer->cpu->getStatus();

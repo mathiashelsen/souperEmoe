@@ -9,7 +9,7 @@ void int_runtest(void)
 
   fifo<unsigned char *> videoStream;
 
-  Computer *computer = new Computer(&videoStream, OSR, "software/int_test.o");
+  Computer *computer = new Computer(&videoStream, OSR, NULL, "software/int_test.o");
  
   printf("First IRQ instruction: 0x%02X\n", computer->memory->read(0xcf00));
 

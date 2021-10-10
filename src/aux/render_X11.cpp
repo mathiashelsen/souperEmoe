@@ -4,6 +4,14 @@ render_X11::render_X11(fifo<unsigned char *> *Input_FIFO, int OSR)
 {
   _videoStream  = Input_FIFO;
   _OSR          = OSR;
+  _keyStream    = NULL;
+}
+
+render_X11::render_X11(fifo<unsigned char *> *Input_FIFO, int OSR, keystream* keyStream)
+{
+  _videoStream  = Input_FIFO;
+  _OSR          = OSR;
+  _keyStream    = keyStream;
 }
 
 void render_X11::run(void)
@@ -48,23 +56,28 @@ void render_X11::run(void)
 
     }
 
-    if(XPending(display))
+    while(XPending(display))
     {
       printf("There is an event...\n");
       XNextEvent(display, &event);
-      
-      /* keyboard events */
-      if (event.type == KeyPress)
+     
+      if(_keyStream)
       {
-          printf( "KeyPress: %x\n", event.xkey.keycode );
-      
-          /* exit on ESC key press */
-          if ( event.xkey.keycode == 0x09 )
-              _enableStream = false;
-      }
-      else if (event.type == KeyRelease)
-      {
-          printf( "KeyRelease: %x\n", event.xkey.keycode );
+        /* keyboard events */
+        if (event.type == KeyPress)
+        {
+            printf( "KeyPress: %x\n", event.xkey.keycode );
+            _keyStream->setKey( event.xkey.keycode );
+        
+            /* exit on ESC key press */
+            if ( event.xkey.keycode == 0x09 )
+                _enableStream = false;
+        }
+        else if (event.type == KeyRelease)
+        {
+            printf( "KeyRelease: %x\n", event.xkey.keycode );
+            _keyStream->clearKey( event.xkey.keycode );
+        }
       }
     }
   }

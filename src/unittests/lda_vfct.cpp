@@ -14,7 +14,7 @@ void lda_runtest2(void)
   //render_X11 videoOutput = render_X11( &videoStream, OSR);
   //std::thread videoThread( &render_X11::run, &videoOutput );
 
-  Computer *computer = new Computer(&videoStream, OSR, "software/lda_test2.o");
+  Computer *computer = new Computer(&videoStream, OSR, NULL, "software/lda_test2.o");
 
   computer->run(10);
   if((uint8_t) computer->cpu->getAcc() != 0xBB)
@@ -75,7 +75,7 @@ void lda_runtest(void)
   //render_X11 videoOutput = render_X11( &videoStream, OSR);
   //std::thread videoThread( &render_X11::run, &videoOutput );
 
-  Computer *computer = new Computer(&videoStream, OSR, "software/lda_test.o");
+  Computer *computer = new Computer(&videoStream, OSR, NULL, "software/lda_test.o");
 
   /*
    * Test for LDA,Imm -> Negative number

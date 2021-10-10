@@ -13,6 +13,7 @@
 
 #include "c64_constants.hpp"
 #include "fifo.hpp"
+#include "keystream.hpp"
 
 class render_X11
 {
@@ -24,11 +25,13 @@ class render_X11
     fifo<unsigned char*>* _videoStream;
     bool                  _enableStream;
     int                   _OSR;
+    keystream*            _keyStream;
 
     std::chrono::high_resolution_clock::time_point prevFrame;
     std::chrono::high_resolution_clock::time_point currFrame;
   public:
-    render_X11(fifo<unsigned char *> *videoStream, int OSR); //Will add an output FIFO later for keyboard/mouse input to the C64
+    render_X11(fifo<unsigned char *> *videoStream, int OSR);
+    render_X11(fifo<unsigned char *> *videoStream, int OSR, keystream* keyStream);
     void run(void); // Function will fork a thread and keep looking at the FIFO
     void stop(void);
 };
