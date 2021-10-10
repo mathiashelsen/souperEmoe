@@ -11,6 +11,8 @@ screen_hb = $55
 
 delay_val = $56
 
+SCNKEY    = $ff9f
+
 .start:
   lda #$03
   sta pos_x
@@ -35,6 +37,8 @@ main:
   jsr .clear_screen
   jsr .draw_screen
   jsr .delay
+  jsr SCNKEY
+  jsr .keyboard_func
   jmp main
   
 .update_position:
@@ -199,3 +203,18 @@ delay_y_loop:
   cpy delay_val
   bne start_x_loop
   rts
+
+.keyboard_func:
+  ldx $c6
+  cpx #$00
+  beq +
+  ldy $0277
+  cpy #$41
+  bne +
+  lda dir_x
+  eor #$01
+  sta dir_x
+  lda dir_y
+  eor #$01
+  sta dir_y
++ rts

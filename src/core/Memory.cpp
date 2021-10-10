@@ -27,12 +27,14 @@ Memory::Memory(int nBytes)
   ram[IRQ_VECTOR]   = 0x00;
   ram[IRQ_VECTOR+1] = 0xCF;
 
+  _keyStream = NULL;
 }
 
-Memory::Memory(int nBytes, const char* objectCodeFilename)
+Memory::Memory(int nBytes, const char* objectCodeFilename, keystream* keyStream)
 {
-  ram     = (uint8_t *)malloc(nBytes);
-  ramSize = nBytes;
+  ram         = (uint8_t *)malloc(nBytes);
+  ramSize     = nBytes;
+  _keyStream  = keyStream;
 
   memset(ram, 0, nBytes);
 
@@ -51,6 +53,11 @@ Memory::Memory(int nBytes, const char* objectCodeFilename)
   //std::cout << "Total bytes read: " << codeStream.gcount() << std::endl;
   //codeStream.close();
 
+  //////////////////////
+  //                  //
+  // LOAD OBJECT CODE //
+  //                  //
+  //////////////////////
   FILE * fs = fopen(objectCodeFilename, "rb");
   fseek(fs, 0, SEEK_END);
   int fSize = ftell(fs);
@@ -58,6 +65,19 @@ Memory::Memory(int nBytes, const char* objectCodeFilename)
   std::cout << "C says there are " << fSize << " byte to be read" << std::endl;
   fread(ram+0xC000, fSize, 1, fs);
   fclose(fs);
+
+  //////////////////////
+  //                  //
+  // LOAD KERNAL CODE //
+  //                  //
+  //////////////////////
+  fs = fopen("software/kernal.o", "rb");
+  fseek(fs, 0, SEEK_END);
+  fSize = ftell(fs);
+  rewind(fs);
+  fread(ram+0xff8d, fSize, 1, fs);
+  fclose(fs);
+
 
   // Set the PC at RST to 0xC000
   ram[RST_VECTOR]   = 0x00;
@@ -73,7 +93,27 @@ Memory::~Memory()
 
 uint8_t Memory::read(int addr)
 {
-  //printf("Reading value 0x%02X from 0x%04X\n", (uint8_t) ram[addr], (uint16_t) addr);
+  // A request is made for SCNKEY KERNAL routine
+  // This entire routine is now done inside "Memory"
+  // and the kernal is a NOP and RTS
+  if(addr == 0xff9f)
+  {
+    char* keysPressed;
+    int   nKeysPressed;
+    keysPressed = _keyStream->getAllPressed(nKeysPressed);
+    ram[0xC6] = (uint8_t) nKeysPressed;
+    if(nKeysPressed)
+    {
+      printf("A number of keys were pressed: %02d\n", nKeysPressed);
+      for(int i = 0; i < nKeysPressed && i < 10; i++)
+      {
+        ram[0x277 + (uint8_t)i] = (uint8_t) keysPressed[i];
+      }
+
+      delete keysPressed;
+    }
+  }
+
   if(addr <= ramSize)
   {
     return ram[addr];

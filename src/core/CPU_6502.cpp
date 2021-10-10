@@ -125,6 +125,8 @@ int CPU_6502::runNextOperation(int IRQ, int NMI)
 
     switch(decodInstr._opCode)
     {
+        case NOP:
+          break;
         case LDA:
           acc = operand;
           this->updateFlagsNZ(acc);

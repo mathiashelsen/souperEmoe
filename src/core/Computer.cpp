@@ -10,7 +10,7 @@ Computer::Computer(fifo<unsigned char*>* videoStream, int OSR, keystream* keyStr
 
 Computer::Computer(fifo<unsigned char*>* videoStream, int OSR, keystream* keyStream, const char* objectCodeFilename)
 {
-  memory      = new Memory(0xffff, objectCodeFilename);
+  memory      = new Memory(0xffff, objectCodeFilename, keyStream);
   cpu         = new CPU_6502(memory);
   video       = new VICII(videoStream, memory, OSR);
   _keyStream  = keyStream;
@@ -45,16 +45,13 @@ void Computer::run(void)
         keysPressed = _keyStream->getAllPressed(nKeysPressed);
         if(nKeysPressed)
         {
-          printf("The following keys were pressed: ");
           for(int i = 0; i < nKeysPressed; i++)
           {
-            printf("0x%02X, ", keysPressed[i]);
             if(keysPressed[i] == 0x09)
             {
               reset = true;
             }
           }
-          printf("\n");
           delete keysPressed;
         }
       }
