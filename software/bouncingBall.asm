@@ -6,6 +6,9 @@ dir_x = $51   ;; 0 = left, 1 = right
 pos_y = $52   ;; [0..25]
 dir_y = $53   ;; 0 = down, 1 = up
 
+paddle_left   = $80
+paddle_right  = $81
+
 screen_lb = $54
 screen_hb = $55
 
@@ -25,8 +28,12 @@ SCNKEY    = $ff9f
   sta screen_lb
   lda #$04
   sta screen_hb
-  lda #$0f
+  lda #$3f
   sta delay_val
+  lda #$0a
+  sta paddle_left
+  lda #$19
+  sta paddle_right
   jmp main
 
 .fullBox:
@@ -36,9 +43,11 @@ main:
   jsr .update_position
   jsr .clear_screen
   jsr .draw_screen
+  jsr draw_paddle
   jsr .delay
   jsr SCNKEY
-  jsr .keyboard_func
+  jsr keyboard_func
+  jsr detect_collisions
   jmp main
   
 .update_position:
@@ -91,7 +100,7 @@ main:
   rts
 
 .move_y_right:
-  cmp #$19          ;; Check if we dont fall of the screen
+  cmp #$18          ;; Check if we dont fall of the screen
   bne +             ;; If we do, dont move but flip
   jsr .flip_y
   jsr .move_y_left
@@ -204,7 +213,7 @@ delay_y_loop:
   bne start_x_loop
   rts
 
-.keyboard_func:
+keyboard_func:
   ldx $c6
   cpx #$00
   beq +
@@ -214,6 +223,71 @@ delay_y_loop:
   lda dir_x
   eor #$01
   sta dir_x
+  lda dir_y
+  eor #$01
+  sta dir_y
++ cpy #$71
+  bne +
+  jsr move_paddle_left
++ cpy #$72
+  bne +
+  jsr move_paddle_right
++ rts
+
+move_paddle_left:
+  lda paddle_left
+  cmp #$00
+  beq +
+  sec
+  sbc #$01
+  sta paddle_left
+  lda paddle_right
+  sec
+  sbc #$01
+  sta paddle_right
++ rts
+
+move_paddle_right:
+  lda paddle_right
+  cmp #$28
+  beq +
+  clc
+  adc #$01
+  sta paddle_right
+  lda paddle_left
+  clc
+  adc #$01
+  sta paddle_left
++ rts
+
+draw_paddle:
+  lda #$98
+  sta screen_lb
+  lda #$07
+  sta screen_hb
+  ldy #$00
+  lda #$45
+  cpy paddle_left
+  beq .draw_paddle_active
+- iny
+  cpy paddle_left
+  bne -
+.draw_paddle_active:
+  sta (screen_lb),y
+  iny
+  cpy paddle_right
+  bne .draw_paddle_active
+  rts
+
+detect_collisions:
+  lda pos_y
+  cmp #$16
+  bne +
+  lda pos_x
+  cmp paddle_left
+  bmi +
+  cmp paddle_right
+  bpl +
   lda dir_y
   eor #$01
   sta dir_y

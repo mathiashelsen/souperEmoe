@@ -65,6 +65,8 @@ void render_X11::run(void)
         /* keyboard events */
         if (event.type == KeyPress)
         {
+
+            printf("User has pressed key 0x%02X\n", event.xkey.keycode);
             _keyStream->setKey( event.xkey.keycode );
         
             /* exit on ESC key press */
