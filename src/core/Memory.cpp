@@ -84,11 +84,16 @@ Memory::Memory(int nBytes, const char* objectCodeFilename, keystream* keyStream)
   ram[RST_VECTOR+1] = 0xC0;
   ram[IRQ_VECTOR]   = 0x00;
   ram[IRQ_VECTOR+1] = 0xCF;
+
+  VICII_Register    = new uint8_t[49];
+  VICII_Register[0x18] = 0b00010010;
 }
 
 Memory::~Memory()
 {
   free(ram);
+
+  delete VICII_Register;
 }
 
 uint8_t Memory::read(int addr)
@@ -113,6 +118,11 @@ uint8_t Memory::read(int addr)
     }
   }
 
+  if(addr >= 0xD000 && addr <= 0xD030)
+  {
+    return VICII_Register[addr - 0xD000];
+  }
+
   if(addr <= ramSize)
   {
     return ram[addr];
@@ -126,18 +136,10 @@ uint8_t Memory::read(int addr)
 void Memory::write(int addr, uint8_t data)
 {
   //printf("Writing value 0x%02X to address %04X\n", (uint8_t) data, (uint16_t) addr);
-  if(addr < ramSize)
+  if(addr >= 0xD000 && addr <= 0xD030)
+  {
+    VICII_Register[addr - 0xD000] = data;
+  }else if(addr < ramSize){
     ram[addr] = data;
-
-  //switch(addr)
-  //{
-  //  case 0x50: printf("Updating pos_x to %d\n", data);
-  //            break;
-  //  case 0x51: printf("Updating dir_x to %d\n", data);
-  //            break;
-  //  case 0x52: printf("Updating pos_y to %d\n", data);
-  //            break;
-  //  case 0x53: printf("Updating dir_y to %d\n", data);
-  //            break;
-  //}
+  }
 }

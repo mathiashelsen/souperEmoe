@@ -27,9 +27,12 @@ class VICII : public Video
     int           slowCtr;
     int           charROM_BaseAddr;
     int           screenRAM_BaseAddr;
+    uint8_t       memoryControlRegister; // 0xD018
   public:
     VICII(fifo<unsigned char*>* videoStream, Memory* memory, int OSR);
     int runNextOperation(int CPU_CyclesPassed);
+    uint8_t getRegister(uint16_t address);
+    void    setRegister(uint16_t address, uint8_t value);
 };
 
 #endif

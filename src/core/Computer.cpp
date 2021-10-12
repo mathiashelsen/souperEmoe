@@ -14,7 +14,6 @@ Computer::Computer(fifo<unsigned char*>* videoStream, int OSR, keystream* keyStr
   cpu         = new CPU_6502(memory);
   video       = new VICII(videoStream, memory, OSR);
   _keyStream  = keyStream;
-
 }
 
 void Computer::run(void)

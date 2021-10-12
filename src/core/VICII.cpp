@@ -8,7 +8,7 @@ static uint32_t colormap[] =
     0xaaffee,
     0xcc44cc,
     0x00cc55,
-    0x0000aa,
+    0x352879,
     0xeeee77,
     0xdd8855,
     0x664400,
@@ -16,34 +16,39 @@ static uint32_t colormap[] =
     0x333333,
     0x777777,
     0xaaff66,
-    0x0088ff,
+    0x6c5eb5,
     0xbbbbbb
   };
 
 VICII::VICII(fifo<unsigned char*>* videoStream, Memory* memory, int OSR) : Video(videoStream, memory, OSR)
 {
-  colCtr = 0;
-  rowCtr = 0;
+  colCtr                = 0;
+  rowCtr                = 0;
 
-  frontColor  = colormap[14];
-  backColor   = colormap[6];
+  frontColor            = colormap[14];
+  backColor             = colormap[6];
 
-  p             = (unsigned char*) malloc(SCREEN_XSIZE*SCREEN_YSIZE*4*_OSR*_OSR);
+  p                     = (unsigned char*) malloc(SCREEN_XSIZE*SCREEN_YSIZE*4*_OSR*_OSR);
   memset((void *)p, 0, SCREEN_XSIZE*SCREEN_YSIZE*4*_OSR*_OSR);
-  screenPtr     = (uint32_t *) p;
-  screenBase    = screenPtr;
-  screenCtr     = 0;
-  memoryCtr     = 0;
-  fastCtr       = 0;
-  slowCtr       = 0;
+  screenPtr             = (uint32_t *) p;
+  screenBase            = screenPtr;
+  screenCtr             = 0;
+  memoryCtr             = 0;
+  fastCtr               = 0;
+  slowCtr               = 0;
 
-  charROM_BaseAddr    = DEFAULT_CHAR_ROM_BASE_ADDR;
-  screenRAM_BaseAddr  = DEFAULT_SCREEN_RAM_BASE_ADDR;
+  charROM_BaseAddr      = DEFAULT_CHAR_ROM_BASE_ADDR;
+  screenRAM_BaseAddr    = DEFAULT_SCREEN_RAM_BASE_ADDR;
+
+  memoryControlRegister = 0b00010000;
 }
 
 int VICII::runNextOperation(int CPU_CyclesPassed)
 {
   int cellsToCopy = 0;
+  uint8_t memcfg = (_memory->read(0xD018) >> 4) & 0x0F;
+  screenRAM_BaseAddr = memcfg * DEFAULT_SCREEN_RAM_BASE_ADDR;
+
   if(rowCtr > ROW_DEADTIME)
   {
     // Check if we have to discard a few cycles because they were invalid
@@ -162,4 +167,22 @@ int VICII::runNextOperation(int CPU_CyclesPassed)
   }
 
   return 0;
+}
+
+
+uint8_t VICII::getRegister(uint16_t address)
+{
+  if(address == 0xD018)
+  {
+    return memoryControlRegister;
+  }else{
+    return 0;
+  }
+}
+void    VICII::setRegister(uint16_t address, uint8_t value)
+{
+  if(address == 0xD018)
+  {
+    memoryControlRegister = value;
+  }
 }

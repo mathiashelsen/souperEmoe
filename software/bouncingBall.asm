@@ -11,8 +11,14 @@ paddle_right  = $81
 
 screen_lb = $54
 screen_hb = $55
+screen_base = $60
 
 delay_val = $56
+
+move_ball_delay = $57
+move_ball_delay_init = $58
+
+lives = $59
 
 SCNKEY    = $ff9f
 
@@ -28,29 +34,54 @@ SCNKEY    = $ff9f
   sta screen_lb
   lda #$04
   sta screen_hb
-  lda #$3f
+  sta screen_base
+  lda #$0f
   sta delay_val
-  lda #$0a
+  lda #$0f
   sta paddle_left
-  lda #$19
+  lda #$18
   sta paddle_right
+  lda #$01
+  sta move_ball_delay_init
+  sta move_ball_delay
+  lda #$03
+  sta lives
   jmp main
 
 .fullBox:
   !byte $51
 
+.game_over_msg:
+  !scr "game over"
+
+.lives_msg:
+  !scr "lives:"
+
 main:
-  jsr .update_position
-  jsr .clear_screen
-  jsr .draw_screen
+  jsr clear_screen
+  jsr draw_screen
   jsr draw_paddle
-  jsr .delay
+  jsr draw_lives
+  jsr flip_draw_buffer
+  jsr delay
   jsr SCNKEY
   jsr keyboard_func
-  jsr detect_collisions
+  jsr update_ball
   jmp main
+
+update_ball:
+  ldx move_ball_delay
+  dex
+  beq +
+  stx move_ball_delay
+  rts
++ lda move_ball_delay_init
+  sta move_ball_delay
+  jsr detect_collisions
+  jsr update_position
+  rts
   
-.update_position:
+update_position:
   lda pos_x
   ldx dir_x
   cpx #$0           ;; Check if the X -direction is to the left
@@ -128,10 +159,10 @@ main:
   sta pos_y
   rts
 
-.clear_screen:
+clear_screen:
   lda #$00
   sta screen_lb
-  lda #$04
+  lda screen_base
   sta screen_hb
 
   ldx #$00
@@ -159,10 +190,10 @@ main:
   bne .clear_row
   rts
 
-.draw_screen:
+draw_screen:
   lda #$00          ;; Initialize the base address of the screen
   sta screen_lb     ;; to 0x0400
-  lda #$04
+  lda screen_base
   sta screen_hb
 
   lda #$00          ;; Loop over all lines
@@ -199,7 +230,7 @@ main:
   rts
 
 
-.delay:
+delay:
   ldy #$00
 start_x_loop:
   ldx #$00
@@ -263,7 +294,9 @@ move_paddle_right:
 draw_paddle:
   lda #$98
   sta screen_lb
-  lda #$07
+  lda screen_base ;;#$07
+  clc
+  adc #$03
   sta screen_hb
   ldy #$00
   lda #$45
@@ -291,4 +324,78 @@ detect_collisions:
   lda dir_y
   eor #$01
   sta dir_y
++ lda pos_y
+  cmp #$17
+  bne +
+  jsr initialize_ball
+  lda lives
+  sec
+  sbc #$01
+  beq .goto_final
+  sta lives
+  rts
+.goto_final:
+  jsr final
 + rts
+
+initialize_ball:
+  lda #$14
+  sta pos_x
+  lda #$15
+  sta pos_y
+  lda #$0
+  sta dir_y
+  rts
+
+draw_lives:
+  lda #$00
+  sta screen_lb
+  lda screen_base
+  sta screen_hb
+  ldy #$00
+- lda .lives_msg,y
+  sta (screen_lb), y 
+  cpy #$6
+  beq +
+  iny
+  bne -
++ lda lives
+  clc
+  adc #$30
+  sta (screen_lb),y
+  rts
+
+final:
+  lda #$04
+  sta screen_base
+  lda #$10
+  sta $d018
+  lda #$ef
+  sta screen_lb
+  lda screen_base
+  clc
+  adc #$01
+  sta screen_hb
+  ldy #$00
+- lda .game_over_msg,y
+  sta (screen_lb), y 
+  cpy #$8
+  beq +
+  iny
+  bne -
++ jmp final
+
+flip_draw_buffer:
+  lda screen_base
+  cmp #$04
+  bne +
+  lda #$08
+  sta screen_base
+  lda #$10
+  sta $d018
+  rts
++ lda #$04
+  sta screen_base
+  lda #$20
+  sta $d018
+  rts
