@@ -1,24 +1,21 @@
 *=$c000
 
-pos_x = $50   ;; [0..39]
-dir_x = $51   ;; 0 = left, 1 = right 
+pos_x                 = $50   ;; [0..39]
+dir_x                 = $51   ;; 0 = left, 1 = right 
 
-pos_y = $52   ;; [0..25]
-dir_y = $53   ;; 0 = down, 1 = up
+pos_y                 = $52   ;; [0..25]
+dir_y                 = $53   ;; 0 = down, 1 = up
 
-paddle_left   = $80
-paddle_right  = $81
-
-screen_lb = $54
-screen_hb = $55
-screen_base = $60
-
-delay_val = $56
-
-move_ball_delay = $57
-move_ball_delay_init = $58
-
-lives = $59
+paddle_left           = $80
+paddle_right          = $81
+screen_lb             = $54   ;; Both are used in the (ZP),y addressing mode
+screen_hb             = $55   ;; to compose the screen RAM address
+screen_base           = $60   ;; We alternate between 0x400 and 0x800
+delay_val             = $56
+move_ball_delay       = $57
+move_ball_delay_init  = $58
+lives                 = $59
+start_squares         = $10
 
 SCNKEY    = $ff9f
 
