@@ -15,7 +15,9 @@ delay_val             = $56
 move_ball_delay       = $57
 move_ball_delay_init  = $58
 lives                 = $59
-start_squares         = $10
+start_squares         = $10   ;; Each byte holds 8 boxes
+squares_ctr_x         = $0a   ;; How many bytes on a row have been drawn
+squares_ctr_y         = $0b   ;; How many rows have been drawn
 
 SCNKEY    = $ff9f
 
@@ -43,6 +45,8 @@ SCNKEY    = $ff9f
   sta move_ball_delay
   lda #$03
   sta lives
+  lda #$ff
+  sta start_squares
   jmp main
 
 .fullBox:
@@ -59,6 +63,7 @@ main:
   jsr draw_screen
   jsr draw_paddle
   jsr draw_lives
+  jsr draw_boxes
   jsr flip_draw_buffer
   jsr delay
   jsr SCNKEY
@@ -307,6 +312,33 @@ draw_paddle:
   iny
   cpy paddle_right
   bne .draw_paddle_active
+  rts
+
+;; start_squares
+;; squares_ctr_x
+;; squares_ctr_y
+draw_boxes:
+  lda #$00
+  clc
+  adc #$2a
+  sta screen_lb
+  lda screen_base
+  adc #$00 
+  sta screen_hb
+  lda start_squares
+
+.draw_single_byte:
+  ldy #$0
+- and #$01
+  beq +
+  tax
+  lda #$01
+  sta (screen_lb),y
+  txa
++ iny
+  lsr
+  cpy #$08
+  bne -
   rts
 
 detect_collisions:
