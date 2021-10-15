@@ -62,21 +62,21 @@ void Computer::run(void)
     endOfFrame = std::chrono::high_resolution_clock::now();
     int frameTime = (int) std::chrono::duration_cast<std::chrono::microseconds>(endOfFrame - startOfFrame).count();
 
-    avgFrameTime[frameTimeIndex] = frameTime;
-    frameTimeIndex++;
-    if(frameTimeIndex == 100)
-    {
-      int avgFrameTimeValue = 0;
-      for(int i=0; i<100; i++)
-      {
-        avgFrameTimeValue += avgFrameTime[i];
-      }
+    //avgFrameTime[frameTimeIndex] = frameTime;
+    //frameTimeIndex++;
+    //if(frameTimeIndex == 100)
+    //{
+    //  int avgFrameTimeValue = 0;
+    //  for(int i=0; i<100; i++)
+    //  {
+    //    avgFrameTimeValue += avgFrameTime[i];
+    //  }
 
-      std::cout << "Average time used for computation: " << (avgFrameTimeValue/100) << std::endl;
-      std::cout << "Average load used for simulation : " << ((double)avgFrameTimeValue/100./(double)FRAMETIME) << std::endl;
+    //  std::cout << "Average time used for computation: " << (avgFrameTimeValue/100) << std::endl;
+    //  std::cout << "Average load used for simulation : " << ((double)avgFrameTimeValue/100./(double)FRAMETIME) << std::endl;
 
-      frameTimeIndex = 0;
-    }
+    //  frameTimeIndex = 0;
+    //}
 
     // Go to sleep if required
     if(frameTime < FRAMETIME)

@@ -29,10 +29,4 @@ void      MemoryController::write (uint16_t address, uint8_t data)
   {
     _memory->write(address, data);
   }
-
-  if(address >= 0xd800 && address <= 0xdbe8)
-  {
-    printf("Wrote 0x%02X to 0x%04X\n", data, address);
-  }
-
 }

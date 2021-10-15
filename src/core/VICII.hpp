@@ -32,9 +32,10 @@ class VICII : public Video
     int           memoryCtr;
     int           fastCtr;
     int           slowCtr;
-    int           charROM_BaseAddr;
-    int           screenRAM_BaseAddr;
-    int           colorRAM_BaseAddr;
+    uint16_t      charROM_BaseAddr;
+    uint16_t      screenRAM_BaseAddr;
+    uint16_t      colorRAM_BaseAddr;
+    uint16_t      memoryBankCfg;
     uint8_t       memoryControlRegister; // 0xD018
     uint8_t       backgroundColor[4];
     t_video_mode  video_mode;
