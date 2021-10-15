@@ -15,7 +15,7 @@
 #define FRAMETIME                     20000
 #define CYCLES_PER_FRAME              63*312
 
-#define DEFAULT_CHAR_ROM_BASE_ADDR    0xD00
+#define DEFAULT_CHAR_ROM_BASE_ADDR    0x800
 #define DEFAULT_SCREEN_RAM_BASE_ADDR  0x400
 #define DEFAULT_STACK_BASE_ADDR       0xFF
 

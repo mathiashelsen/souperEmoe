@@ -47,7 +47,9 @@ int VICII::runNextOperation(int CPU_CyclesPassed)
 {
   int cellsToCopy = 0;
   uint8_t memcfg = (memoryControlRegister >> 4) & 0x0F;
-  screenRAM_BaseAddr = memcfg * DEFAULT_SCREEN_RAM_BASE_ADDR;
+  screenRAM_BaseAddr  = memcfg * DEFAULT_SCREEN_RAM_BASE_ADDR;
+  memcfg = (memoryControlRegister >> 1) & 0b111;
+  charROM_BaseAddr    = memcfg * DEFAULT_CHAR_ROM_BASE_ADDR;
 
   if(rowCtr > ROW_DEADTIME)
   {
@@ -71,8 +73,8 @@ int VICII::runNextOperation(int CPU_CyclesPassed)
 
   for(int i = 0; i < cellsToCopy/8; i++)
   {
-    char charToShow = _memory->read(screenRAM_BaseAddr + fastCtr + slowCtr*40);
-    char readByte   = _memory->read(charROM_BaseAddr+charToShow*8+lineOfChar);
+    char charToShow = _memory->read         (screenRAM_BaseAddr + fastCtr + slowCtr*40);
+    char readByte   = _memory->read_char_rom(charROM_BaseAddr   + charToShow*8 + lineOfChar);
 
     //char readByte = 0x0F; // You actually want to read from memory here
     fastCtr++;

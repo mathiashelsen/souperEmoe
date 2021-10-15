@@ -38,15 +38,18 @@ Memory::Memory(int nBytes, const char* objectCodeFilename, keystream* keyStream)
 
   memset(ram, 0, nBytes);
 
+
+  charROM     = (uint8_t *)malloc(4096);
   std::ifstream fileStream;
 
   fileStream.open(charROM_Name, std::ifstream::in);
-  fileStream.get((char *) (ram + DEFAULT_CHAR_ROM_BASE_ADDR), 4096);
+  fileStream.get((char *) charROM, 4096);
   fileStream.close();
-  for(int i = 0; i < 2024; i++)
-  {
-    ram[i+DEFAULT_SCREEN_RAM_BASE_ADDR] = 32; //Empty char
-  }
+
+  //for(int i = 0; i < 2024; i++)
+  //{
+  //  ram[i+DEFAULT_SCREEN_RAM_BASE_ADDR] = 32; //Empty char
+  //}
 
   //std::ifstream codeStream(objectCodeFilename, std::ios::binary);
   //codeStream.get((char *)(ram+0xc000), 2048);
@@ -85,15 +88,12 @@ Memory::Memory(int nBytes, const char* objectCodeFilename, keystream* keyStream)
   ram[IRQ_VECTOR]   = 0x00;
   ram[IRQ_VECTOR+1] = 0xCF;
 
-  VICII_Register    = new uint8_t[49];
-  VICII_Register[0x18] = 0b00010010;
 }
 
 Memory::~Memory()
 {
   free(ram);
-
-  delete VICII_Register;
+  free(charROM);
 }
 
 uint8_t Memory::read(int addr)
@@ -125,6 +125,18 @@ uint8_t Memory::read(int addr)
   else
   {
     return (uint8_t) 0;
+  }
+}
+
+uint8_t Memory::read_char_rom(int addr)
+{
+  if(addr < 4096)
+  {
+    return charROM[addr];
+  }
+  else
+  {
+    return 0;
   }
 }
 
