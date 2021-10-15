@@ -15,9 +15,11 @@
 #define FRAMETIME                     20000
 #define CYCLES_PER_FRAME              63*312
 
-#define DEFAULT_COLOR_RAM_BASE_ADDR   0xD800
-#define DEFAULT_CHAR_ROM_BASE_ADDR    0x0800
-#define DEFAULT_SCREEN_RAM_BASE_ADDR  0x0400
+#define DEFAULT_KERNAL_ROM_BASE_ADDR  0xE000
+
+#define DEFAULT_COLOR_RAM_BASE_ADDR   0xD800  // Absolute, same for CPU and VIC II
+#define DEFAULT_CHAR_ROM_BASE_ADDR    0x0800  // From the VIC II stand point
+#define DEFAULT_SCREEN_RAM_BASE_ADDR  0x0400  // From the VIC II stand point
 #define DEFAULT_STACK_BASE_ADDR       0xFF
 
 #define MEM_START_VICII_REG           0xD000

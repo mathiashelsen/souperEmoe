@@ -74,11 +74,12 @@ Memory::Memory(int nBytes, const char* objectCodeFilename, keystream* keyStream)
   // LOAD KERNAL CODE //
   //                  //
   //////////////////////
-  fs = fopen("software/kernal.o", "rb");
+  kernalROM   = malloc(8192);
+  fs          = fopen("software/kernal.o", "rb");
   fseek(fs, 0, SEEK_END);
-  fSize = ftell(fs);
+  fSize       = ftell(fs);
   rewind(fs);
-  fread(ram+0xff8d, fSize, 1, fs);
+  fread(kernalROM, fSize, 1, fs);
   fclose(fs);
 
 
@@ -94,14 +95,41 @@ Memory::~Memory()
 {
   free(ram);
   free(charROM);
+  free(kernalROM);
 }
 
-uint8_t Memory::read(int addr)
+uint8_t Memory::read(uint16_t addr)
 {
+
+  if(addr <= ramSize)
+  {
+    return ram[addr];
+  }
+  else
+  {
+    return (uint8_t) 0;
+  }
+}
+
+uint8_t Memory::read_char_rom(uint16_t addr)
+{
+  if(addr < 4096)
+  {
+    return charROM[addr];
+  }
+  else
+  {
+    return 0;
+  }
+}
+
+uint8_t Memory::read_kernal_rom(uint16_t addr)
+{
+
   // A request is made for SCNKEY KERNAL routine
   // This entire routine is now done inside "Memory"
   // and the kernal is a NOP and RTS
-  if(addr == 0xff9f)
+  if(addr == (0xff9f - DEFAULT_KERNAL_ROM_BASE_ADDR))
   {
     char* keysPressed;
     int   nKeysPressed;
@@ -118,21 +146,9 @@ uint8_t Memory::read(int addr)
     }
   }
 
-  if(addr <= ramSize)
+  if(addr < 8192)
   {
-    return ram[addr];
-  }
-  else
-  {
-    return (uint8_t) 0;
-  }
-}
-
-uint8_t Memory::read_char_rom(int addr)
-{
-  if(addr < 4096)
-  {
-    return charROM[addr];
+    return kernalROM[addr];
   }
   else
   {
@@ -140,7 +156,8 @@ uint8_t Memory::read_char_rom(int addr)
   }
 }
 
-void Memory::write(int addr, uint8_t data)
+
+void Memory::write(uint16_t addr, uint8_t data)
 {
   if(addr < ramSize){
     ram[addr] = data;

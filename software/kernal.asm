@@ -1,4 +1,4 @@
-*=$ff8d
+*=$e000
   NOP
 
 !align $ff9f, $ff9f
