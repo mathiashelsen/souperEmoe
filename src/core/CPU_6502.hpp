@@ -34,7 +34,7 @@ class CPU_6502 : public CPU
     void        updateFlagsNZ(char regVal);
 
   public:
-    CPU_6502(Memory* memory);
+    CPU_6502(MemoryController* memoryCtl);
     void        reset(void);
     int         runNextOperation(int IRQ, int NMI);
     int         runNextOperation() { return this->runNextOperation(0, 0); };

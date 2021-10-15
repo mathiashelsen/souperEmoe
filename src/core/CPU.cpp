@@ -1,8 +1,8 @@
 #include "CPU.hpp"
 
-CPU::CPU(Memory *memory)
+CPU::CPU(MemoryController *memoryCtl)
 {
-  _memory = memory;
+  _memoryCtl = memoryCtl;
 }
 
 int CPU::runNextOperation(void)

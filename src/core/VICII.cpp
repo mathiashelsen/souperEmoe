@@ -46,7 +46,7 @@ VICII::VICII(fifo<unsigned char*>* videoStream, Memory* memory, int OSR) : Video
 int VICII::runNextOperation(int CPU_CyclesPassed)
 {
   int cellsToCopy = 0;
-  uint8_t memcfg = (_memory->read(0xD018) >> 4) & 0x0F;
+  uint8_t memcfg = (memoryControlRegister >> 4) & 0x0F;
   screenRAM_BaseAddr = memcfg * DEFAULT_SCREEN_RAM_BASE_ADDR;
 
   if(rowCtr > ROW_DEADTIME)
@@ -161,16 +161,16 @@ int VICII::runNextOperation(int CPU_CyclesPassed)
     memset((void *)p, 0, SCREEN_XSIZE*SCREEN_YSIZE*4*_OSR*_OSR);
     screenPtr   = (uint32_t *) p;
     screenBase  = screenPtr;
-    memoryCtr = 0;
-    fastCtr       = 0;
-    slowCtr       = 0;
+    memoryCtr   = 0;
+    fastCtr     = 0;
+    slowCtr     = 0;
   }
 
   return 0;
 }
 
 
-uint8_t VICII::getRegister(uint16_t address)
+uint8_t VICII::read(uint16_t address)
 {
   if(address == 0xD018)
   {
@@ -179,7 +179,7 @@ uint8_t VICII::getRegister(uint16_t address)
     return 0;
   }
 }
-void    VICII::setRegister(uint16_t address, uint8_t value)
+void    VICII::write(uint16_t address, uint8_t value)
 {
   if(address == 0xD018)
   {

@@ -3,16 +3,18 @@
 Computer::Computer(fifo<unsigned char*>* videoStream, int OSR, keystream* keyStream)
 {
   memory      = new Memory(0xffff);
-  cpu         = new CPU_6502(memory);
   video       = new VICII(videoStream, memory, OSR);
+  memoryCtl   = new MemoryController(video, memory);
+  cpu         = new CPU_6502(memoryCtl);
   _keyStream  = keyStream;
 }
 
 Computer::Computer(fifo<unsigned char*>* videoStream, int OSR, keystream* keyStream, const char* objectCodeFilename)
 {
   memory      = new Memory(0xffff, objectCodeFilename, keyStream);
-  cpu         = new CPU_6502(memory);
   video       = new VICII(videoStream, memory, OSR);
+  memoryCtl   = new MemoryController(video, memory);
+  cpu         = new CPU_6502(memoryCtl);
   _keyStream  = keyStream;
 }
 

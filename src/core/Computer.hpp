@@ -5,6 +5,7 @@
 #include "../aux/keystream.hpp"
 #include "../aux/c64_constants.hpp"
 
+#include "MemoryController.hpp"
 #include "Memory.hpp"
 //#include "DummyMemory.hpp"
 #include "CPU.hpp"
@@ -20,16 +21,17 @@
 class Computer
 {
   protected:
-    keystream*  _keyStream;
-    Video*      video;
-    bool        reset;
-    int         _OSR;
+    keystream*          _keyStream;
+    Video*              video;
+    MemoryController*   memoryCtl;
+    bool                reset;
+    int                 _OSR;
 
     std::chrono::high_resolution_clock::time_point startOfFrame;
     std::chrono::high_resolution_clock::time_point endOfFrame;
   public:
-    Memory*   memory;
-    CPU_6502* cpu;
+    Memory*             memory;
+    CPU_6502*           cpu;
     Computer(fifo<unsigned char*>* videoStream, int OSR, keystream* keyStream);
     Computer(fifo<unsigned char*>* videoStream, int OSR, keystream* keyStream, const char* objectCodeFilename);
     void run();

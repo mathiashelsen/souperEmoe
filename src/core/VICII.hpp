@@ -31,8 +31,8 @@ class VICII : public Video
   public:
     VICII(fifo<unsigned char*>* videoStream, Memory* memory, int OSR);
     int runNextOperation(int CPU_CyclesPassed);
-    uint8_t getRegister(uint16_t address);
-    void    setRegister(uint16_t address, uint8_t value);
+    uint8_t read  (uint16_t address);
+    void    write (uint16_t address, uint8_t value);
 };
 
 #endif

@@ -1,15 +1,15 @@
 #ifndef _CPU_HPP
 #define _CPU_HPP
 
-#include "Memory.hpp"
+#include "MemoryController.hpp"
 
 class CPU
 {
   protected:
-    Memory* _memory;
+    MemoryController* _memoryCtl;
     int pc;
   public:
-    CPU(Memory* memory);
+    CPU(MemoryController* memoryCtl);
     virtual void reset(void);
     virtual int runNextOperation(void);
     virtual int runNextOperation(int, int);

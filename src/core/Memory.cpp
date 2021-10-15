@@ -118,11 +118,6 @@ uint8_t Memory::read(int addr)
     }
   }
 
-  if(addr >= 0xD000 && addr <= 0xD030)
-  {
-    return VICII_Register[addr - 0xD000];
-  }
-
   if(addr <= ramSize)
   {
     return ram[addr];
@@ -135,11 +130,7 @@ uint8_t Memory::read(int addr)
 
 void Memory::write(int addr, uint8_t data)
 {
-  //printf("Writing value 0x%02X to address %04X\n", (uint8_t) data, (uint16_t) addr);
-  if(addr >= 0xD000 && addr <= 0xD030)
-  {
-    VICII_Register[addr - 0xD000] = data;
-  }else if(addr < ramSize){
+  if(addr < ramSize){
     ram[addr] = data;
   }
 }

@@ -1,6 +1,6 @@
 #include "CPU_6502.hpp"
 
-CPU_6502::CPU_6502(Memory *  memory) : CPU(memory)
+CPU_6502::CPU_6502(MemoryController *  memoryCtl) : CPU(memoryCtl)
 {
   this->reset();
 }
@@ -10,7 +10,7 @@ void CPU_6502::reset(void)
   acc     = 0;
   reg_x   = 0;
   reg_y   = 0;
-  pc      = _memory->read(RST_VECTOR) | (_memory->read(RST_VECTOR+1) << 8);
+  pc      = _memoryCtl->read(RST_VECTOR) | (_memoryCtl->read(RST_VECTOR+1) << 8);
   sp      = DEFAULT_STACK_BASE_ADDR;
 
   status.N = 0;
@@ -24,9 +24,9 @@ void CPU_6502::reset(void)
 
 int CPU_6502::runNextOperation(int IRQ, int NMI)
 {
-  uint8_t   instruction = _memory->read(pc);
-  uint8_t   op1         = _memory->read(pc+1);
-  uint8_t   op2         = _memory->read(pc+2);
+  uint8_t   instruction = _memoryCtl->read(pc);
+  uint8_t   op1         = _memoryCtl->read(pc+1);
+  uint8_t   op2         = _memoryCtl->read(pc+2);
   uint16_t  address     = 0;
   uint8_t   operand     = 0;
   uint16_t  result      = 0;
@@ -39,20 +39,20 @@ int CPU_6502::runNextOperation(int IRQ, int NMI)
     // PC = current instruction, which is not going to be processed!
 
     // Inverse-RTI
-    _memory->write( 0x100 | sp, pc & 0xff);
+    _memoryCtl->write( 0x100 | sp, pc & 0xff);
     sp--;
-    _memory->write( 0x100 | sp, (pc >> 8) & 0xff);
+    _memoryCtl->write( 0x100 | sp, (pc >> 8) & 0xff);
     sp--;
-    _memory->write( 0x100 | sp, this->getStatusFlags() );
+    _memoryCtl->write( 0x100 | sp, this->getStatusFlags() );
     sp--;
 
     if(NMI)
     {
-      pc = _memory->read(NMI_VECTOR) | (_memory->read(NMI_VECTOR+1) << 8);
+      pc = _memoryCtl->read(NMI_VECTOR) | (_memoryCtl->read(NMI_VECTOR+1) << 8);
     }else if(status.B){
-      pc = _memory->read(BRK_VECTOR) | (_memory->read(BRK_VECTOR+1) << 8);
+      pc = _memoryCtl->read(BRK_VECTOR) | (_memoryCtl->read(BRK_VECTOR+1) << 8);
     }else{
-      pc = _memory->read(IRQ_VECTOR) | (_memory->read(IRQ_VECTOR+1) << 8);
+      pc = _memoryCtl->read(IRQ_VECTOR) | (_memoryCtl->read(IRQ_VECTOR+1) << 8);
     }
   }
   else
@@ -65,13 +65,13 @@ int CPU_6502::runNextOperation(int IRQ, int NMI)
     switch(decodInstr._addrMode)
     {
       case _ZPX_: // (ZP, X) -- Good
-        address = _memory->read(op1 + reg_x) | (_memory->read(op1 + reg_x + 1) << 8);
-        operand = _memory->read(address);
+        address = _memoryCtl->read(op1 + reg_x) | (_memoryCtl->read(op1 + reg_x + 1) << 8);
+        operand = _memoryCtl->read(address);
         pc      += 1;
         break;
       case ZP: // ZP -- Good
         address = op1;
-        operand = _memory->read(address);
+        operand = _memoryCtl->read(address);
         pc      += 1;
         break;
       case Imm: // Imm -- Good
@@ -80,33 +80,32 @@ int CPU_6502::runNextOperation(int IRQ, int NMI)
         break;
       case Abs: // Abs -- Good
         address = op1 | (op2 << 8);
-        operand = _memory->read(address);
+        operand = _memoryCtl->read(address);
         pc     += 2;
         break;
       case _ZP_Y: // (ZP), y -- Good
-        address = _memory->read(op1) | (_memory->read(op1 + 1) << 8);
+        address = _memoryCtl->read(op1) | (_memoryCtl->read(op1 + 1) << 8);
         address += (uint8_t) reg_y; // Required for add-with-carry, y=0xEF is positive and increases address
-        operand = _memory->read(address);
+        operand = _memoryCtl->read(address);
         pc      += 1;
         break;
       case ZPX: // ZP, x -- Good
         address = op1 + reg_x; // Add-without-carry, e.g. x=0xEF is negative and decreases address
-        operand = _memory->read(op1 + reg_x); 
-        printf("Going to read from ZP,x: 0x%04X\n", op1+reg_x);
+        operand = _memoryCtl->read(op1 + reg_x); 
         pc      += 1;
         break;
       case ZPY: // ZP, x -- Good
-        operand = _memory->read(op1 + reg_y); 
+        operand = _memoryCtl->read(op1 + reg_y); 
         pc      += 1;
         break;
       case AbsY: // Abs, y -- Good
         address = (op1 | (op2 << 8)) + (uint8_t) reg_y;
-        operand = _memory->read(address);
+        operand = _memoryCtl->read(address);
         pc      += 2;
         break;
       case AbsX: // Abs, x -- Good
         address = (op1 | (op2 << 8)) + (uint8_t) reg_x;
-        operand = _memory->read(address);
+        operand = _memoryCtl->read(address);
         pc      += 2;
         break;
       case Acc:
@@ -117,7 +116,7 @@ int CPU_6502::runNextOperation(int IRQ, int NMI)
         // TODO: The line below is not correct, but I am lazy. If address = 0x03FF
         // it should compose the new address out of (0x03FF) | (0x0300), i.e.
         // it should overflow.
-        address = _memory->read(address) | (_memory->read(address+1) << 8);
+        address = _memoryCtl->read(address) | (_memoryCtl->read(address+1) << 8);
         pc     += 2;
         break;
       case Impl:
@@ -141,20 +140,20 @@ int CPU_6502::runNextOperation(int IRQ, int NMI)
           this->updateFlagsNZ(reg_y);
           break;
         case STA:
-          _memory->write(address, acc);
+          _memoryCtl->write(address, acc);
           break;
         case STX:
-          _memory->write(address, reg_x);
+          _memoryCtl->write(address, reg_x);
           break;
         case STY:
-          _memory->write(address, reg_y);
+          _memoryCtl->write(address, reg_y);
           break;
         case INC:
-          _memory->write(address, operand+1);
+          _memoryCtl->write(address, operand+1);
           this->updateFlagsNZ(operand+1);
           break;
         case DEC:
-          _memory->write(address, operand-1);
+          _memoryCtl->write(address, operand-1);
           this->updateFlagsNZ(operand-1);
           break;
         case TAX:
@@ -364,32 +363,32 @@ int CPU_6502::runNextOperation(int IRQ, int NMI)
           pc = address;
           break;
         case JSR:
-          _memory->write((0x100 | sp), pc & 0xff);
+          _memoryCtl->write((0x100 | sp), pc & 0xff);
           sp--;
-          _memory->write((0x100 | sp), (pc >> 8) & 0xff);
+          _memoryCtl->write((0x100 | sp), (pc >> 8) & 0xff);
           sp--;
           pc = address;
           break;
         case RTS:
           sp++;
-          pc = _memory->read((0x100 | sp)) << 8;
+          pc = _memoryCtl->read((0x100 | sp)) << 8;
           sp++;
-          pc = pc | _memory->read((0x100 | sp));
+          pc = pc | _memoryCtl->read((0x100 | sp));
           break;
         case RTI:
           sp++;
-          this->setStatusFlags(_memory->read((0x100 | sp)));
+          this->setStatusFlags(_memoryCtl->read((0x100 | sp)));
           sp++;
-          pc = _memory->read((0x100 | sp)) << 8;
+          pc = _memoryCtl->read((0x100 | sp)) << 8;
           sp++;
-          pc = pc | _memory->read((0x100 | sp));
+          pc = pc | _memoryCtl->read((0x100 | sp));
           break;
         case PHA:
-          _memory->write(0x100 | sp, acc);
+          _memoryCtl->write(0x100 | sp, acc);
           sp--;
           break;
         case PHP:
-          _memory->write(0x100 | sp, this->getStatusFlags());
+          _memoryCtl->write(0x100 | sp, this->getStatusFlags());
           sp--;
           break;
         case TXS:
@@ -397,12 +396,12 @@ int CPU_6502::runNextOperation(int IRQ, int NMI)
           break;
         case PLA:
           sp++;
-          acc = _memory->read(0x100 | sp);
+          acc = _memoryCtl->read(0x100 | sp);
           this->updateFlagsNZ(acc);
           break;
         case PLP:
           sp++;
-          this->setStatusFlags(_memory->read(0x100 | sp));
+          this->setStatusFlags(_memoryCtl->read(0x100 | sp));
           break;
         case TSX:
           reg_x = (char) sp;

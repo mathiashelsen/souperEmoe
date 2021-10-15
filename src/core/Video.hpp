@@ -16,8 +16,8 @@ class Video
   public:
     Video(fifo<unsigned char *> *videoStream, Memory* memory, int OSR);
     virtual int runNextOperation(int CPU_CyclesPassed);
-    virtual uint8_t getRegister(uint16_t address) { return 0; };
-    virtual void    setRegister(uint16_t address, uint8_t value) { };
+    virtual uint8_t read  (uint16_t address)                { return 0; };
+    virtual void    write (uint16_t address, uint8_t value) { };
 };
 
 #endif

@@ -2,10 +2,10 @@
 
 void int_runtest(void)
 {
-  int errorCount = 0;
+  //int errorCount = 0;
   int OSR        = 3;
-  uint8_t accVal    = 0;
-  statusType stat;
+  //uint8_t accVal    = 0;
+  //statusType stat;
 
   fifo<unsigned char *> videoStream;
 
