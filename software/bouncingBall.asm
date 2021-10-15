@@ -16,8 +16,9 @@ move_ball_delay       = $57
 move_ball_delay_init  = $58
 lives                 = $59
 start_squares         = $10   ;; Each byte holds 8 boxes
-squares_ctr_x         = $0a   ;; How many bytes on a row have been drawn
-squares_ctr_y         = $0b   ;; How many rows have been drawn
+squares_ctr_x         = $0a   ;; How many bytes on a row have been drawn [0..3]
+squares_ctr_y         = $0b   ;; How many rows have been drawn [0..5]
+square_byte           = $0c   ;; The current byte being decoded
 
 SCNKEY    = $ff9f
 
@@ -46,7 +47,11 @@ SCNKEY    = $ff9f
   lda #$03
   sta lives
   lda #$ff
-  sta start_squares
+  ldy #$00
+- sta start_squares,y
+  iny
+  cpy #$18
+  bne -
   jmp main
 
 .fullBox:
@@ -319,6 +324,9 @@ draw_paddle:
 ;; squares_ctr_y
 draw_boxes:
   lda #$00
+  sta squares_ctr_x
+  sta squares_ctr_y
+  lda #$00
   clc
   adc #$2a
   sta screen_lb
@@ -326,17 +334,47 @@ draw_boxes:
   adc #$00 
   sta screen_hb
   lda start_squares
+  sta square_byte
+--  lda #$00
+  sta squares_ctr_x
+- jsr .draw_single_byte
+  ldx squares_ctr_x
+  inx
+  stx squares_ctr_x
+  lda screen_lb
+  clc
+  adc #$08
+  sta screen_lb
+  lda start_squares,x
+  sta square_byte
+  cpx #$04
+  bne -
+  clc
+  lda screen_lb
+  adc #$08
+  sta screen_lb
+  lda screen_hb
+  adc #$00
+  sta screen_hb
+  ldx squares_ctr_y
+  inx
+  stx squares_ctr_y
+  cpx #$02
+  bne --
+  rts
 
+;; Acc = byte to be drawn
 .draw_single_byte:
+  lda square_byte
   ldy #$0
 - and #$01
   beq +
-  tax
-  lda #$01
+  lda #$5a
   sta (screen_lb),y
-  txa
 + iny
+  lda square_byte
   lsr
+  sta square_byte
   cpy #$08
   bne -
   rts

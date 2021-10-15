@@ -92,6 +92,7 @@ int CPU_6502::runNextOperation(int IRQ, int NMI)
       case ZPX: // ZP, x -- Good
         address = op1 + reg_x; // Add-without-carry, e.g. x=0xEF is negative and decreases address
         operand = _memory->read(op1 + reg_x); 
+        printf("Going to read from ZP,x: 0x%04X\n", op1+reg_x);
         pc      += 1;
         break;
       case ZPY: // ZP, x -- Good
