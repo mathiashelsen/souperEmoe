@@ -25,9 +25,6 @@ VICII::VICII(fifo<unsigned char*>* videoStream, Memory* memory, int OSR) : Video
   colCtr                = 0;
   rowCtr                = 0;
 
-  frontColor            = colormap[1];
-  backColor             = colormap[0];
-
   p                     = (unsigned char*) malloc(SCREEN_XSIZE*SCREEN_YSIZE*4*_OSR*_OSR);
   memset((void *)p, 0, SCREEN_XSIZE*SCREEN_YSIZE*4*_OSR*_OSR);
   screenPtr             = (uint32_t *) p;
@@ -39,12 +36,17 @@ VICII::VICII(fifo<unsigned char*>* videoStream, Memory* memory, int OSR) : Video
 
   charROM_BaseAddr      = DEFAULT_CHAR_ROM_BASE_ADDR;
   screenRAM_BaseAddr    = DEFAULT_SCREEN_RAM_BASE_ADDR;
+  colorRAM_BaseAddr     = DEFAULT_COLOR_RAM_BASE_ADDR;
 
   memoryControlRegister = 0b00010000;
+
+  video_mode            = STANDARD_CHAR;
 }
 
 int VICII::runNextOperation(int CPU_CyclesPassed)
 {
+  uint32_t      frontColor;
+  uint32_t      backColor;
   int cellsToCopy = 0;
   uint8_t memcfg = (memoryControlRegister >> 4) & 0x0F;
   screenRAM_BaseAddr  = memcfg * DEFAULT_SCREEN_RAM_BASE_ADDR;
@@ -75,6 +77,7 @@ int VICII::runNextOperation(int CPU_CyclesPassed)
   {
     char charToShow = _memory->read         (screenRAM_BaseAddr + fastCtr + slowCtr*40);
     char readByte   = _memory->read_char_rom(charROM_BaseAddr   + charToShow*8 + lineOfChar);
+    char charColor  = _memory->read         (colorRAM_BaseAddr  + fastCtr + slowCtr*40);
 
     //char readByte = 0x0F; // You actually want to read from memory here
     fastCtr++;
@@ -89,7 +92,16 @@ int VICII::runNextOperation(int CPU_CyclesPassed)
 
     for(int i = 0; i < 8; i++)
     {
-      pixelValue = (((readByte & 0x80) >> 7) * frontColor) | (((~readByte & 0x80) >> 7) * backColor);
+      if(video_mode == STANDARD_CHAR)
+      {
+        frontColor = colormap[charColor & 0x0f];
+        backColor  = colormap[backgroundColor[0]];
+        pixelValue = (((readByte & 0x80) >> 7) * frontColor) | (((~readByte & 0x80) >> 7) * backColor);
+      }
+      else
+      {
+        pixelValue = 0;
+      }
       readByte <<= 1;
        
       switch(_OSR)
@@ -177,14 +189,23 @@ uint8_t VICII::read(uint16_t address)
   if(address == 0xD018)
   {
     return memoryControlRegister;
-  }else{
-    return 0;
   }
+  if( address >= 0xD021 && address <= 0xD024 )
+  {
+    return backgroundColor[address - 0xD021];
+  }
+
+
+  return 0;
 }
 void    VICII::write(uint16_t address, uint8_t value)
 {
   if(address == 0xD018)
   {
     memoryControlRegister = value;
+  }
+  if(address >= 0xD021 && address <= 0xD024)
+  {
+    backgroundColor[address - 0xD021] = value;
   }
 }

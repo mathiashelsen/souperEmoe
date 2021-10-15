@@ -19,6 +19,8 @@ start_squares         = $10   ;; Each byte holds 8 boxes
 squares_ctr_x         = $0a   ;; How many bytes on a row have been drawn [0..3]
 squares_ctr_y         = $0b   ;; How many rows have been drawn [0..5]
 square_byte           = $0c   ;; The current byte being decoded
+color_ram_base_lb     = $20
+color_ram_base_hb     = $21
 
 SCNKEY    = $ff9f
 
@@ -52,6 +54,7 @@ SCNKEY    = $ff9f
   iny
   cpy #$18
   bne -
+  jsr colorscreen
   jmp main
 
 .fullBox:
@@ -68,7 +71,7 @@ main:
   jsr draw_screen
   jsr draw_paddle
   jsr draw_lives
-  jsr draw_boxes
+  ;;jsr draw_boxes
   jsr flip_draw_buffer
   jsr delay
   jsr SCNKEY
@@ -466,3 +469,44 @@ flip_draw_buffer:
   lda #$20
   sta $d018
   rts
+
+colorscreen:
+  lda #$00
+  sta $d021
+  lda #$00
+  sta color_ram_base_lb
+  lda #$d8
+  sta color_ram_base_hb
+  ldx #$00
+- jsr .set_five_colors
+  inx
+  clc
+  lda color_ram_base_lb
+  adc #$05
+  sta color_ram_base_lb
+  lda color_ram_base_hb
+  adc #$00
+  sta color_ram_base_hb
+  cpx #$c8
+  bne -
+  rts
+
+;; Modifies reg_y, acc
+.set_five_colors:
+  clc
+  ldy #$00
+  lda #$04
+  sta (color_ram_base_lb),y
+  iny
+  adc #$01
+  sta (color_ram_base_lb),y
+  iny
+  adc #$01
+  sta (color_ram_base_lb),y
+  iny
+  adc #$01
+  sta (color_ram_base_lb),y
+  iny
+  adc #$01
+  sta (color_ram_base_lb),y
+  rts 
