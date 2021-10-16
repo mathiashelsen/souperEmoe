@@ -21,12 +21,6 @@ Memory::Memory(int nBytes)
   fileStream.get((char*)(ram+0xc000), 1024);
   fileStream.close();
 
-  // Set the PC at RST to 0xC000
-  ram[RST_VECTOR]   = 0x00;
-  ram[RST_VECTOR+1] = 0xC0;
-  ram[IRQ_VECTOR]   = 0x00;
-  ram[IRQ_VECTOR+1] = 0xCF;
-
   _keyStream = NULL;
 }
 
@@ -74,7 +68,7 @@ Memory::Memory(int nBytes, const char* objectCodeFilename, keystream* keyStream)
   // LOAD KERNAL CODE //
   //                  //
   //////////////////////
-  kernalROM   = malloc(8192);
+  kernalROM   = (uint8_t *) malloc(8192);
   fs          = fopen("software/kernal.o", "rb");
   fseek(fs, 0, SEEK_END);
   fSize       = ftell(fs);
@@ -84,10 +78,10 @@ Memory::Memory(int nBytes, const char* objectCodeFilename, keystream* keyStream)
 
 
   // Set the PC at RST to 0xC000
-  ram[RST_VECTOR]   = 0x00;
-  ram[RST_VECTOR+1] = 0xC0;
-  ram[IRQ_VECTOR]   = 0x00;
-  ram[IRQ_VECTOR+1] = 0xCF;
+  // ram[RST_VECTOR]   = 0x00;
+  // ram[RST_VECTOR+1] = 0xC0;
+  // ram[IRQ_VECTOR]   = 0x00;
+  // ram[IRQ_VECTOR+1] = 0xCF;
 
 }
 

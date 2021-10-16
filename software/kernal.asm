@@ -6,3 +6,11 @@ SCNKEY:
   NOP
   NOP
   RTS
+
+!align $fffa, $fffa
+NMI_VECTOR:
+  !word $c000
+RST_VECTOR:
+  !word $c000
+IRQ_VECTOR:
+  !word $c000

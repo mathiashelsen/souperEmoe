@@ -13,6 +13,9 @@ class MemoryController
   protected:
     Video*    _video;
     Memory*   _memory;
+    bool      LORAM;
+    bool      HIRAM;
+    bool      CHAREN;
   public:
     MemoryController(Video* video, Memory* memory);
     uint8_t   read  (uint16_t address);
