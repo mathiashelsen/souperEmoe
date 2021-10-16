@@ -24,10 +24,17 @@ uint8_t   MemoryController::read  (uint16_t address)
   }
 
   /* The match should be on the entire IO range */
-  if(address >= MEM_START_VICII_REG && address <= MEM_END_VICII_REG)
+  if(address >= DEFAULT_START_IO_MEM_RANGE && address <= DEFAULT_END_IO_MEM_RANGE)
   {
     if(CHAREN) {
-      return _video->read(address);
+      if(address >= MEM_START_VICII_REG && address <= MEM_END_VICII_REG)
+      {
+        return _video->read(address);
+      }
+      if(address >= DEFAULT_COLOR_RAM_BASE_ADDR && address <= (DEFAULT_COLOR_RAM_BASE_ADDR+1023))
+      {
+        return _memory->read_color_ram(address - DEFAULT_COLOR_RAM_BASE_ADDR);
+      }
     } else if(!HIRAM && !LORAM) {
       return _memory->read         (address);
     } else {
@@ -43,19 +50,23 @@ uint8_t   MemoryController::read  (uint16_t address)
 
 void      MemoryController::write (uint16_t address, uint8_t data)
 {
-  /*
-   * Here we need to have some dependency on the memory configuration
-   */
   if(address >= DEFAULT_KERNAL_ROM_BASE_ADDR)
   {
     if(!HIRAM) {
       _memory->write(address, data);
     }
   }
-  else if(address >= MEM_START_VICII_REG && address <= MEM_END_VICII_REG)
+  else if(address >= DEFAULT_START_IO_MEM_RANGE && address <= DEFAULT_END_IO_MEM_RANGE)
   {
     if(CHAREN) {
-      _video-> write(address, data);
+      if(address >= MEM_START_VICII_REG && address <= MEM_END_VICII_REG)
+      {
+        return _video->write(address, data);
+      }
+      if(address >= DEFAULT_COLOR_RAM_BASE_ADDR && address <= (DEFAULT_COLOR_RAM_BASE_ADDR+1023))
+      {
+        return _memory->write_color_ram(address - DEFAULT_COLOR_RAM_BASE_ADDR, data);
+      }
     } else if(!HIRAM && !LORAM) {
       _memory->write(address, data);
     }

@@ -59,7 +59,7 @@ Memory::Memory(int nBytes, const char* objectCodeFilename, keystream* keyStream)
   fseek(fs, 0, SEEK_END);
   int fSize = ftell(fs);
   rewind(fs);
-  std::cout << "C says there are " << fSize << " byte to be read" << std::endl;
+  std::cout << "C says there ares " << fSize << " byte to be read" << std::endl;
   fread(ram+0xC000, fSize, 1, fs);
   fclose(fs);
 
@@ -73,16 +73,12 @@ Memory::Memory(int nBytes, const char* objectCodeFilename, keystream* keyStream)
   fseek(fs, 0, SEEK_END);
   fSize       = ftell(fs);
   rewind(fs);
+  std::cout << "C says there ares " << fSize << " byte to be read" << std::endl;
   fread(kernalROM, fSize, 1, fs);
   fclose(fs);
 
 
-  // Set the PC at RST to 0xC000
-  // ram[RST_VECTOR]   = 0x00;
-  // ram[RST_VECTOR+1] = 0xC0;
-  // ram[IRQ_VECTOR]   = 0x00;
-  // ram[IRQ_VECTOR+1] = 0xCF;
-
+  colorRAM    = (uint8_t *) malloc(1024);
 }
 
 Memory::~Memory()
@@ -90,6 +86,7 @@ Memory::~Memory()
   free(ram);
   free(charROM);
   free(kernalROM);
+  free(colorRAM);
 }
 
 uint8_t Memory::read(uint16_t addr)
@@ -150,10 +147,29 @@ uint8_t Memory::read_kernal_rom(uint16_t addr)
   }
 }
 
+uint8_t Memory::read_color_ram(uint16_t addr)
+{
+  if(addr < 1024)
+  {
+    return colorRAM[addr];
+  }
+
+  return 0;
+}
+
 
 void Memory::write(uint16_t addr, uint8_t data)
 {
   if(addr < ramSize){
     ram[addr] = data;
+  }
+}
+
+
+void Memory::write_color_ram(uint16_t addr, uint8_t data)
+{
+  if(addr < 1024)
+  {
+    colorRAM[addr] = data;
   }
 }

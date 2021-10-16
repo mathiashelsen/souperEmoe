@@ -80,8 +80,8 @@ int VICII::runNextOperation(int CPU_CyclesPassed)
 
   for(int i = 0; i < cellsToCopy/8; i++)
   {
-    char charToShow = _memory->read         (screenRAM_BaseAddr + fastCtr + slowCtr*40);
-    char charColor  = _memory->read         (colorRAM_BaseAddr  + fastCtr + slowCtr*40);
+    char charToShow = _memory->read           (screenRAM_BaseAddr + fastCtr + slowCtr*40);
+    char charColor  = _memory->read_color_ram (                     fastCtr + slowCtr*40);
     char readByte   = 0;
     if(memoryBankCfg == 0 || memoryBankCfg == 2)
     {

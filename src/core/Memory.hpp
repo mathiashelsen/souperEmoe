@@ -21,6 +21,7 @@ class Memory
     uint8_t *   ram;
     uint8_t *   charROM;
     uint8_t *   kernalROM;
+    uint8_t *   colorRAM;
     int         ramSize;
     // Callback functions for setting/getting registers in other
     // chips (e.g. VIC-II)
@@ -34,7 +35,9 @@ class Memory
     virtual uint8_t read            (uint16_t addr);
     virtual uint8_t read_char_rom   (uint16_t addr);
     virtual uint8_t read_kernal_rom (uint16_t addr);
+    virtual uint8_t read_color_ram  (uint16_t addr);
     virtual void write              (uint16_t addr, uint8_t data);
+    virtual void write_color_ram    (uint16_t addr, uint8_t data);
 };
 
 #endif

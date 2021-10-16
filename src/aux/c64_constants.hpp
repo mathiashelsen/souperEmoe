@@ -17,6 +17,9 @@
 
 #define DEFAULT_KERNAL_ROM_BASE_ADDR  0xE000
 
+
+#define DEFAULT_START_IO_MEM_RANGE    0xD000
+#define DEFAULT_END_IO_MEM_RANGE      0xDFFF
 #define DEFAULT_COLOR_RAM_BASE_ADDR   0xD800  // Absolute, same for CPU and VIC II
 #define DEFAULT_CHAR_ROM_BASE_ADDR    0x0800  // From the VIC II stand point
 #define DEFAULT_SCREEN_RAM_BASE_ADDR  0x0400  // From the VIC II stand point
