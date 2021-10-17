@@ -34,28 +34,29 @@ VICII::VICII(fifo<unsigned char*>* videoStream, Memory* memory, int OSR) : Video
   fastCtr               = 0;
   slowCtr               = 0;
 
-  memoryBankCfg         = 0;
+  memoryBankCfg         = 3;
   charROM_BaseAddr      = DEFAULT_CHAR_ROM_BASE_ADDR;
   screenRAM_BaseAddr    = DEFAULT_SCREEN_RAM_BASE_ADDR;
   colorRAM_BaseAddr     = DEFAULT_COLOR_RAM_BASE_ADDR;
 
-  memoryControlRegister = 0b00010000;
+  memoryControlRegister = 0b00010010;
 
   video_mode            = STANDARD_CHAR;
 }
 
 int VICII::runNextOperation(int CPU_CyclesPassed)
 {
+  uint8_t       tmp;
   uint32_t      frontColor;
   uint32_t      backColor;
   int cellsToCopy = 0;
   uint8_t memcfg = (memoryControlRegister >> 4) & 0x0F;
-  screenRAM_BaseAddr  = memoryBankCfg*0x4000 + memcfg * DEFAULT_SCREEN_RAM_BASE_ADDR;
+  screenRAM_BaseAddr  = (3 - memoryBankCfg)*0x4000 + memcfg * DEFAULT_SCREEN_RAM_BASE_ADDR;
   memcfg = (memoryControlRegister >> 1) & 0b111;
   charROM_BaseAddr    = memcfg * DEFAULT_CHAR_ROM_BASE_ADDR;
-  if(memoryBankCfg == 1 || memoryBankCfg == 3)
+  if(memoryBankCfg == 0 || memoryBankCfg == 2)
   {
-    charROM_BaseAddr  += memoryBankCfg*0x4000;
+    charROM_BaseAddr  += (3 - memoryBankCfg)*0x4000;
   }
 
   if(rowCtr > ROW_DEADTIME)
@@ -83,11 +84,11 @@ int VICII::runNextOperation(int CPU_CyclesPassed)
     char charToShow = _memory->read           (screenRAM_BaseAddr + fastCtr + slowCtr*40);
     char charColor  = _memory->read_color_ram (                     fastCtr + slowCtr*40);
     char readByte   = 0;
-    if(memoryBankCfg == 0 || memoryBankCfg == 2)
+    if(memoryBankCfg == 1 || memoryBankCfg == 3)
     {
       readByte      = _memory->read_char_rom(charROM_BaseAddr   + charToShow*8 + lineOfChar);
     }else{
-      readByte      = _memory->read(charROM_BaseAddr   + charToShow*8 + lineOfChar);
+      readByte      = _memory->read         (charROM_BaseAddr   + charToShow*8 + lineOfChar);
     }
 
     //char readByte = 0x0F; // You actually want to read from memory here
@@ -108,12 +109,29 @@ int VICII::runNextOperation(int CPU_CyclesPassed)
         frontColor = colormap[charColor & 0x0f];
         backColor  = colormap[backgroundColor[0]];
         pixelValue = (((readByte & 0x80) >> 7) * frontColor) | (((~readByte & 0x80) >> 7) * backColor);
+        readByte <<= 1;
+      }
+      else if(video_mode == MULTICOLOR_CHAR)
+      {
+        tmp = (readByte >> 6) & 0x03;
+        if(tmp == 0x03)
+        {
+          pixelValue = colormap[charColor & 0x0f];
+        }
+        else
+        {
+          pixelValue = colormap[backgroundColor[tmp]];
+        }
+
+        if( i % 2 == 1)
+        {
+          readByte <<= 2;
+        }
       }
       else
       {
         pixelValue = 0;
       }
-      readByte <<= 1;
        
       switch(_OSR)
       {
@@ -205,6 +223,10 @@ uint8_t VICII::read(uint16_t address)
   {
     return backgroundColor[address - 0xD021];
   }
+  if( address == 0xDD00 )
+  {
+    return memoryBankCfg;
+  }
 
 
   return 0;
@@ -218,5 +240,20 @@ void    VICII::write(uint16_t address, uint8_t value)
   if(address >= 0xD021 && address <= 0xD024)
   {
     backgroundColor[address - 0xD021] = value;
+  }
+  if(address == 0xDD00)
+  {
+    memoryBankCfg = value & 0b11;
+  }
+  if(address == 0xD016)
+  {
+    if(value & 0x10)
+    {
+      video_mode = MULTICOLOR_CHAR; 
+    }
+    else
+    {
+      video_mode = STANDARD_CHAR;
+    }
   }
 }

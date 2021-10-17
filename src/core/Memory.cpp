@@ -26,13 +26,24 @@ Memory::Memory(int nBytes)
 
 Memory::Memory(int nBytes, const char* objectCodeFilename, keystream* keyStream)
 {
-  ram         = (uint8_t *)malloc(nBytes);
-  ramSize     = nBytes;
   _keyStream  = keyStream;
 
+  //////////////////
+  //              //
+  // ALLOCATE RAM //
+  //              //
+  //////////////////
+  ram         = (uint8_t *)malloc(nBytes);
+  ramSize     = nBytes;
   memset(ram, 0, nBytes);
 
 
+
+  ///////////////////
+  //               //
+  // LOAD CHAR ROM //
+  //               //
+  ///////////////////
   charROM     = (uint8_t *)malloc(4096);
   std::ifstream fileStream;
 
@@ -40,15 +51,6 @@ Memory::Memory(int nBytes, const char* objectCodeFilename, keystream* keyStream)
   fileStream.get((char *) charROM, 4096);
   fileStream.close();
 
-  //for(int i = 0; i < 2024; i++)
-  //{
-  //  ram[i+DEFAULT_SCREEN_RAM_BASE_ADDR] = 32; //Empty char
-  //}
-
-  //std::ifstream codeStream(objectCodeFilename, std::ios::binary);
-  //codeStream.get((char *)(ram+0xc000), 2048);
-  //std::cout << "Total bytes read: " << codeStream.gcount() << std::endl;
-  //codeStream.close();
 
   //////////////////////
   //                  //
@@ -77,8 +79,13 @@ Memory::Memory(int nBytes, const char* objectCodeFilename, keystream* keyStream)
   fread(kernalROM, fSize, 1, fs);
   fclose(fs);
 
-
+  ////////////////////////
+  //                    //
+  // ALLOCATE COLOR RAM //
+  //                    //
+  ////////////////////////
   colorRAM    = (uint8_t *) malloc(1024);
+  memset(colorRAM, 0, 1024);
 }
 
 Memory::~Memory()

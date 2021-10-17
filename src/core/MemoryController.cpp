@@ -59,7 +59,7 @@ void      MemoryController::write (uint16_t address, uint8_t data)
   else if(address >= DEFAULT_START_IO_MEM_RANGE && address <= DEFAULT_END_IO_MEM_RANGE)
   {
     if(CHAREN) {
-      if(address >= MEM_START_VICII_REG && address <= MEM_END_VICII_REG)
+      if((address >= MEM_START_VICII_REG && address <= MEM_END_VICII_REG) || address == 0xDD00)
       {
         return _video->write(address, data);
       }
